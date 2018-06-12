@@ -1,8 +1,8 @@
+#!/usr/bin/python
+# -*- coding: utf-8 -*-
 import time
-import sched
 import math
 import threading
-import multiprocessing
 import grovepi
 
 # Grove specs
@@ -25,10 +25,13 @@ lightResistance = 0.0
 sound = 0.0
 
 # Sharing
-mutex = multiprocessing.Lock()
+stop = 0
+mutex = threading.Lock()
 
 # Server
+htmlHeader ="<html><p><b>Timestamp(s)\tTemp(C)\tHum.(%)\tAngle(°)\tLight\tSound</b></p><p>"
 sensorValuesMsg = "no sensor values available"
+htmlFooter = "</p></html>"
 
 from http.server import BaseHTTPRequestHandler, HTTPServer
  
@@ -36,31 +39,30 @@ from http.server import BaseHTTPRequestHandler, HTTPServer
 class sensorHTTPServer_RequestHandler(BaseHTTPRequestHandler):
   # GET
   def do_GET(self):
-        # Send response status code
-        self.send_response(200)
- 
-        # Send headers
-        self.send_header('Content-type','text/html')
-        self.end_headers()
+    # Send response status code
+    self.send_response(200)
 
-        # Send message back to client
-        # Write content as utf-8 data
-        self.wfile.write(bytes(sensorValuesMsg, "utf8"))
-        return
+    # Send headers
+    self.send_header('Content-type','text/html')
+    self.end_headers()
 
-def runSensorServer():
-  # Server settings
-  # Choose port 8080, for port 80, which is normally used for a http server, you need root access
-  server_address = ('0.0.0.0', 8080)
+    # Send message back to client as utf-8 data
+    self.wfile.write(bytes(htmlHeader+sensorValuesMsg+htmlFooter, "utf8"))
+    return
+
+# Starts the HTTP Server
+def runSensorServer(ip, port):
+  server_address = (ip, port)
   httpd = HTTPServer(server_address, sensorHTTPServer_RequestHandler)
   print('Running SensorServer on port:8080...')
   httpd.serve_forever()
-  
+
+# Gathers sensor value for temperature and humidity
 def processDHT(period):
   global t, h, mutex
   with mutex:
     print("processDHT started with period %f sec" %(period))
-  while True:
+  while stop==0:
     try:
       # Get value from temperature sensor
       mutex.acquire()
@@ -69,15 +71,19 @@ def processDHT(period):
       print("processDHT:IOError: %s\r\n" % (str(e)))
     except Exception as e:
       print("processDHT:Error: %s\r\n" % (str(e)))
+    except KeyboardInterrupt:
+      print("DHTLogger closed by keyboard")
+      break
     finally:
       mutex.release()
     time.sleep(period)
-      
+
+# Gathers sensor values for potentiometer angle
 def processPOT(period):
   global angle, mutex
   with mutex:
     print("processPOT started with period %f sec" %(period))
-  while True:
+  while stop==0:
     try:
       # Get value from angle sensor
       mutex.acquire()
@@ -90,15 +96,19 @@ def processPOT(period):
       print("processPOT:IOError: %s\r\n" % (str(e)))
     except Exception as e:
       print("processPOT:Error: %s\r\n" % (str(e)))
+    except KeyboardInterrupt:
+      print("DHTLogger closed by keyboard")
+      break
     finally:
       mutex.release()
     time.sleep(period)
-        
+
+# Gathers sensor values for light
 def processLight(period):
   global lightResistance, mutex
   with mutex:
     print("processLight started with period %f sec" %(period))
-  while True:
+  while stop==0:
     try:
       # Get value from light sensor
       mutex.acquire()
@@ -113,11 +123,12 @@ def processLight(period):
       mutex.release()
     time.sleep(period)
 
+# Gathers sensor values for sound
 def processSound(period):
   global sound, mutex
   with mutex:
     print("processSound started with period %f sec" %(period))
-  while True:
+  while stop==0:
     try:
       # Get value from sound sensor
       mutex.acquire()
@@ -130,10 +141,12 @@ def processSound(period):
     finally:
       mutex.release()
     time.sleep(period)
-
-def processSensorData(period):
+      
+# Prepares the string for the server
+def processData(period):
   global mutex, sensorValuesMsg
-  while True:
+  print("Timestamp(s)\tTemp(C)\tHum.(%)\tAngle(°)\tLight\tSound")
+  while stop==0:
     sensorValuesMsg = "%10.2f\t%2.0f\t%2.0f\t%3.1f\t%3.1f\t%3.1f" % (time.time(), t, h, angle, lightResistance, sound)
     with mutex:
       print(sensorValuesMsg)
@@ -141,44 +154,45 @@ def processSensorData(period):
     
 # Main function
 def main():
-    try:
-      print("Init GrovePi")
-      # Init Pins
-      grovepi.pinMode(dht_sensor_port, "INPUT")
-      grovepi.pinMode(pot_sensor_port, "INPUT")
-      grovepi.pinMode(light_sensor_port, "INPUT")
-      grovepi.pinMode(sound_sensor_port, "INPUT")
-      # Schedule Threads
-      print("Schedule Threads")
-      pDHT = threading.Thread(target = processDHT, args=[2])
-      pLight = threading.Thread(target = processLight, args=[1])
-      pPOT = threading.Thread(target = processPOT, args=[0.2])
-      pSound = threading.Thread(target = processSound, args=[0.005])
-      pServer = threading.Thread(target = processSensorData, args=[0.5])
-      pDHT.start()
-      pLight.start()
-      pPOT.start()
-      pSound.start()
-      pServer.start()
-      # Server
-      print('Starting SensorServer...')
-      runSensorServer()
-    except Exception as e:
-        print("MainError: " + str(e))
-        exit(-1)
-    except KeyboardInterrupt:
-        print("DHTLogger closed by keyboard")
-        exit(1)
+  global stop
+  try:
+    print("Init GrovePi")
+    # Init Pins
+    grovepi.pinMode(dht_sensor_port, "INPUT")
+    grovepi.pinMode(pot_sensor_port, "INPUT")
+    grovepi.pinMode(light_sensor_port, "INPUT")
+    grovepi.pinMode(sound_sensor_port, "INPUT")
+    # Schedule Threads
+    print("Schedule Threads")
+    pDHT = threading.Thread(target = processDHT, args=[2])
+    pLight = threading.Thread(target = processLight, args=[1])
+    pPOT = threading.Thread(target = processPOT, args=[0.2])
+    pSound = threading.Thread(target = processSound, args=[0.005])
+    pData = threading.Thread(target = processData, args=[0.5])
+    pDHT.start()
+    pLight.start()
+    pPOT.start()
+    pSound.start()
+    pData.start()
+    # Server
+    print('Starting SensorServer...')
+    runSensorServer('0.0.0.0', 8080)
+  except Exception as e:
+      print("MainError: " + str(e))
+      exit(-1)
+  except KeyboardInterrupt:
+    print("Stopping...")
+    stop = 1
 
-    # Wait for threads to Join
-    pDHT.join()
-    pLight.join()
-    pPOT.join()
-    pSound.join()
-    pServer.join()
-    
-    print("SensorServer exiting")
-    exit(0)
+  # Wait for threads to Join
+  pDHT.join()
+  pLight.join()
+  pPOT.join()
+  pSound.join()
+  pData.join()
+  
+  print("SensorServer exiting")
+  exit(0)
 
 if __name__ == '__main__':
     main()
