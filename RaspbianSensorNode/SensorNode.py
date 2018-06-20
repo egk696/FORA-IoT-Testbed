@@ -175,7 +175,7 @@ def main():
     pSound.start()
     pData.start()
     # Server
-    print('Starting SensorServer...')
+    print('Starting SensorNode...')
     runSensorServer('0.0.0.0', 8080)
   except Exception as e:
       print("MainError: " + str(e))
@@ -191,7 +191,7 @@ def main():
   pSound.join()
   pData.join()
   
-  print("SensorServer exiting")
+  print("SensorNode exiting")
   exit(0)
 
 if __name__ == '__main__':
