@@ -89,6 +89,7 @@
             <Button x:Name="microsen" Content="Microphone" HorizontalAlignment="Left" Margin="600,50,0,0" VerticalAlignment="Top" FontSize="20" Click="microsen_Click"/>
             <Button x:Name="thermalsen" Content="Thermal Sensor" HorizontalAlignment="Right" Margin="530,50,600,0" VerticalAlignment="Top" FontSize="20" Click="thermalsen_Click"/>
             <Button x:Name="humidsen" Content="Humidity Sensor" HorizontalAlignment="Right" Margin="698,50,300,0" VerticalAlignment="Top" FontSize="20" Click="humidsen_Click"/>
+            <Button x:Name="stopshow" Content="STOP" HorizontalAlignment="Left" Margin="120,50,0,0" VerticalAlignment="Top" Width="83" Click="stopshow_Click"/>
         </Grid>
 
 

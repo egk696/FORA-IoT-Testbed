@@ -136,6 +136,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="GrovePi">
+      <Version>1.0.10</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.1.5</Version>
     </PackageReference>
@@ -145,6 +148,11 @@
     <PackageReference Include="WinRTXamlToolkit.UWP">
       <Version>2.3.0</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="GrovePi">
+      <HintPath>..\..\..\..\..\.nuget\packages\grovepi\1.0.10\lib\uap10.0\GrovePi.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

@@ -61,48 +61,48 @@ namespace ioT
         {
            
         }
-        public string getlightsamplingrate()
+        public int getlightsamplingrate()
         {
-            return "100";
+            return vis.getLightsensSelectedRate();
         }
-        public string getmicrosamplingrate()
+        public int getmicrosamplingrate()
         {
-            return "100";
+            return vis.getMicrosensSelectedRate();
         }
-        public string getthsamplingrate()
+        public int getthsamplingrate()
         {
-            return "100";
+            return vis.getTHsensSelectedRate();
         }
-        public void addDATASETtoLightSensor(int time, float value)
+        public void addDATASETtoLightSensor(double time, float value)
         {
-            if(vis.lightsen.Count > 50)
+            if(vis.lightsen.Count > 150)
             {
                 vis.lightsen.RemoveAt(0);
             }
             vis.lightsen.Add(new DataSet() { Times = time, Amount = value });
 
         }
-        public void addDATASETtomicrophoneSensor(int time, float value)
+        public void addDATASETtomicrophoneSensor(double time, float value)
         {
-            if (vis.microsen.Count > 50)
+            if (vis.microsen.Count > 150)
             {
                 vis.microsen.RemoveAt(0);
             }
             vis.microsen.Add(new DataSet() { Times = time, Amount = value });
 
         }
-        public void addDATASETtoThermalSensor(int time, float value)
+        public void addDATASETtoThermalSensor(double time, float value)
         {
-            if (vis.thermalsen.Count > 50)
+            if (vis.thermalsen.Count > 150)
             {
                 vis.thermalsen.RemoveAt(0);
             }
             vis.thermalsen.Add(new DataSet() { Times = time, Amount = value });
 
         }
-        public void addDATASETtoHumidSensor(int time, float value)
+        public void addDATASETtoHumidSensor(double time, float value)
         {
-            if (vis.humidsen.Count > 50)
+            if (vis.humidsen.Count >150)
             {
                 vis.humidsen.RemoveAt(0);
             }

@@ -1,17 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using WinRTXamlToolkit.Controls.DataVisualization.Charting;
+using System.Runtime.Serialization;
 
 namespace ioT
 {
     public class DataSet
     {
-        public int Times { get; set; }
+        public double Times { get; set; }
         public float Amount { get; set; }
     }
     class VisualEffect
@@ -44,11 +46,12 @@ namespace ioT
         public List<DataSet> microsen = new List<DataSet>();
         public List<DataSet> thermalsen = new List<DataSet>();
         public List<DataSet> humidsen = new List<DataSet>();
+        //List<DataSet> guidata;
         public VisualEffect(Button _forwardBut, Button _backwardBut, Grid _page0, ComboBox _lightsensrate, ComboBox _microsenrate, ComboBox _thsensrate, Button _ft2, Button _ft3, Button _bt1, Button _bt2, Image _conimage,TextBox _user, PasswordBox _pass, TextBox _sen, TextBlock _calmes, Button _pre, Button _forw, RichTextBlock _loger,Grid _page1,Chart _chart)
         {
             _timer = new Windows.UI.Xaml.DispatcherTimer();
             _timer.Tick += _timer_Tick;
-            _timer.Interval = new TimeSpan(0, 0, 0, 0, 500);
+            _timer.Interval = new TimeSpan(0, 0, 0, 0,100);
             forwardBut = _forwardBut;
             backwardBut = _backwardBut;
             Page0 = _page0;
@@ -69,6 +72,7 @@ namespace ioT
             loger = _loger;
             page1 = _page1;
             chart = _chart;
+            //(chart.Series[0] as LineSeries).ItemsSource = guidata;
         }
         public void TimerStarter()
         {
@@ -80,25 +84,36 @@ namespace ioT
         }
         private void _timer_Tick(object sender, object e)
         {
-            if(crrsenstodisp == 0)
+            _timer.Stop();
+            
+            switch (crrsenstodisp)
             {
-                (chart.Series[0] as LineSeries).ItemsSource = lightsen;
+                case 0:
+                    //guidata = new List<DataSet>(lightsen);
+                    (chart.Series[0] as LineSeries).ItemsSource = lightsen;
+                    break;
+                case 1:
+                    //guidata = new List<DataSet>(microsen);
+                    (chart.Series[0] as LineSeries).ItemsSource = microsen;
+                    break;
+                case 2:
+                    //guidata = new List<DataSet>(thermalsen);
+                    (chart.Series[0] as LineSeries).ItemsSource = thermalsen;
+                    break;
+                case 3:
+                    //guidata = new List<DataSet>(humidsen);
+                    (chart.Series[0] as LineSeries).ItemsSource = humidsen;
+                    break;
+                default:
+                    (chart.Series[0] as LineSeries).ItemsSource = null;
+                    break;
             }
-            else if(crrsenstodisp == 1)
-            {
-                (chart.Series[0] as LineSeries).ItemsSource = microsen;
-            }
-            else if(crrsenstodisp == 2)
-            {
-                (chart.Series[0] as LineSeries).ItemsSource = thermalsen;
-            }
-            else if(crrsenstodisp == 3)
-            {
-                (chart.Series[0] as LineSeries).ItemsSource = humidsen;
-            }
-
             
             (chart.Series[0] as LineSeries).Refresh();
+            (chart.Series[0] as LineSeries).ReleasePointerCaptures();
+
+            //(chart.Series[0] as LineSeries).ItemsSource = null;
+            _timer.Start();
 
         }
 
@@ -129,6 +144,10 @@ namespace ioT
             pre.IsEnabled = false;
             forw.IsEnabled = false;
             calstage = 0;
+            lightsen.Clear();
+            microsen.Clear();
+            thermalsen.Clear();
+            humidsen.Clear();
 
         }
         public int BKpressed()
@@ -265,5 +284,19 @@ namespace ioT
         {
             crrsenstodisp = a;
         }
+        public int getLightsensSelectedRate()
+        {
+            return lightsensrate.SelectedIndex;
+        }
+        public int getMicrosensSelectedRate()
+        {
+            return microsensrate.SelectedIndex;
+        }
+        public int getTHsensSelectedRate()
+        {
+            return thsensrate.SelectedIndex;
+        }
+
+
     }
 }
