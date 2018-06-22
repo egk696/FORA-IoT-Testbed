@@ -8,7 +8,7 @@
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ioT</RootNamespace>
-    <AssemblyName>ioT</AssemblyName>
+    <AssemblyName>Sensor_Node</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion Condition=" '$(TargetPlatformVersion)' == '' ">10.0.16299.0</TargetPlatformVersion>
@@ -152,6 +152,18 @@
   <ItemGroup>
     <Reference Include="GrovePi">
       <HintPath>..\..\..\..\..\.nuget\packages\grovepi\1.0.10\lib\uap10.0\GrovePi.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.Core">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for UWP R2 2018\Binaries\Telerik.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.Chart.UWP">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for UWP R2 2018\Binaries\Telerik.UI.Xaml.Chart.UWP.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.DataVisualization.UWP">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for UWP R2 2018\Binaries\Telerik.UI.Xaml.DataVisualization.UWP.dll</HintPath>
+    </Reference>
+    <Reference Include="Telerik.UI.Xaml.Primitives.UWP">
+      <HintPath>..\..\..\..\..\..\..\Program Files (x86)\Progress\Telerik UI for UWP R2 2018\Binaries\Telerik.UI.Xaml.Primitives.UWP.dll</HintPath>
     </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">

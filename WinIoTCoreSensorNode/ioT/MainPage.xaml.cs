@@ -55,7 +55,7 @@ namespace ioT
 
 
             this.InitializeComponent();
-            vis = new VisualEffect(forwardBut, backwardBut, page0,lightsensrate,microsensrate,THsensrate, fortostage2, fortostage3, backtostage1, backtostage2, conimage, usernamebox, passbox, senbox, calmes, pre, forw, loger,page1, chart);
+            vis = new VisualEffect(forwardBut, backwardBut, page0,lightsensrate,microsensrate,THsensrate, fortostage2, fortostage3, backtostage1, backtostage2, conimage, usernamebox, passbox, senbox, calmes, pre, forw, logbox,page1,radChart);
             handler = new GUIDATAHANDLER(vis);
 
             //Sample Entry
@@ -64,10 +64,10 @@ namespace ioT
             lightrate_sample.Add("1.5 sec");
             lightrate_sample.Add("2 sec");
 
+            microphonerate_sample.Add("33 Hz");
+            microphonerate_sample.Add("50 Hz");
+            microphonerate_sample.Add("100 Hz");
             microphonerate_sample.Add("200 Hz");
-            microphonerate_sample.Add("300 Hz");
-            microphonerate_sample.Add("500 Hz");
-            microphonerate_sample.Add("1000 Hz");
 
             thrate_sample.Add("1 sec");
             thrate_sample.Add("2 sec");
@@ -139,7 +139,6 @@ namespace ioT
 
         private void fortostage3_Click(object sender, RoutedEventArgs e)
         {
-            handler.getSamplingRate(lightsensrate.SelectedIndex, microsensrate.SelectedIndex, THsensrate.SelectedIndex);
             vis.st2tost3();
         }
 
@@ -152,19 +151,15 @@ namespace ioT
         {
             if(vis.getCalStage() == 0)
             {
-                handler.getDimLightCal();
                 min_sensor_val = lightsensor_mod.SensorValue();
                 vis.calst1tost2();
             }
             else if(vis.getCalStage() == 1)
             {
-                handler.getLightLightCal();
                 max_sensor_val = lightsensor_mod.SensorValue();
                 vis.calst2tost3();
 
-            }
-
-            
+            }            
         }
 
         private void pre_Click(object sender, RoutedEventArgs e)
@@ -176,32 +171,26 @@ namespace ioT
             else if (vis.getCalStage() == 1)
             {
                 vis.calst2tost1();
-
             }
         }
 
         private void lightsen_Click(object sender, RoutedEventArgs e)
         {
-
-            (chart.Series[0] as LineSeries).ItemsSource = vis.lightsen;
             vis.setVisualTo(0);
         }
 
         private void microsen_Click(object sender, RoutedEventArgs e)
         {
-            (chart.Series[0] as LineSeries).ItemsSource = vis.microsen;
             vis.setVisualTo(1);
         }
 
         private void thermalsen_Click(object sender, RoutedEventArgs e)
         {
-            (chart.Series[0] as LineSeries).ItemsSource = vis.thermalsen;
             vis.setVisualTo(2);
         }
 
         private void humidsen_Click(object sender, RoutedEventArgs e)
         {
-            (chart.Series[0] as LineSeries).ItemsSource = vis.humidsen;
             vis.setVisualTo(3);
         }
         private void LightSensorRead(object sender, object e)
@@ -242,19 +231,19 @@ namespace ioT
             switch (res)
             {
                 case 0:
-                    _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 40);
-                    break;
-                case 1:
                     _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 30);
                     break;
-                case 2:
+                case 1:
                     _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 20);
                     break;
-                case 3:
+                case 2:
                     _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 10);
                     break;
+                case 3:
+                    _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 5);
+                    break;
                 default:
-                    _timer_2.Interval = new TimeSpan(0, 0, 0, 1, 0);
+                    _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 10);
                     break;
             }
 
@@ -303,7 +292,7 @@ namespace ioT
 
         private void stopshow_Click(object sender, RoutedEventArgs e)
         {
-            (chart.Series[0] as LineSeries).ItemsSource = null;
+            vis.setVisualTo(5);
         }
     }
 }

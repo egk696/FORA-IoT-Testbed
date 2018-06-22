@@ -8,6 +8,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 using System.Runtime.Serialization;
+using Telerik.UI.Xaml.Controls.Chart;
 
 namespace ioT
 {
@@ -36,9 +37,9 @@ namespace ioT
         TextBlock calmes;
         Button pre;
         Button forw;
-        RichTextBlock loger;
+        TextBox loger;
         Grid page1;
-        Chart chart;
+        RadCartesianChart radchart;
         int calstage = 0;
         int crrsenstodisp = 0;
         private int curr_page = 0;
@@ -46,12 +47,12 @@ namespace ioT
         public List<DataSet> microsen = new List<DataSet>();
         public List<DataSet> thermalsen = new List<DataSet>();
         public List<DataSet> humidsen = new List<DataSet>();
-        //List<DataSet> guidata;
-        public VisualEffect(Button _forwardBut, Button _backwardBut, Grid _page0, ComboBox _lightsensrate, ComboBox _microsenrate, ComboBox _thsensrate, Button _ft2, Button _ft3, Button _bt1, Button _bt2, Image _conimage,TextBox _user, PasswordBox _pass, TextBox _sen, TextBlock _calmes, Button _pre, Button _forw, RichTextBlock _loger,Grid _page1,Chart _chart)
+        float[] guidata = new float[99];
+        public VisualEffect(Button _forwardBut, Button _backwardBut, Grid _page0, ComboBox _lightsensrate, ComboBox _microsenrate, ComboBox _thsensrate, Button _ft2, Button _ft3, Button _bt1, Button _bt2, Image _conimage,TextBox _user, PasswordBox _pass, TextBox _sen, TextBlock _calmes, Button _pre, Button _forw, TextBox _loger,Grid _page1,RadCartesianChart _radchart)
         {
             _timer = new Windows.UI.Xaml.DispatcherTimer();
             _timer.Tick += _timer_Tick;
-            _timer.Interval = new TimeSpan(0, 0, 0, 0,100);
+            _timer.Interval = new TimeSpan(0, 0, 0, 0,20);
             forwardBut = _forwardBut;
             backwardBut = _backwardBut;
             Page0 = _page0;
@@ -71,11 +72,10 @@ namespace ioT
             forw = _forw;
             loger = _loger;
             page1 = _page1;
-            chart = _chart;
-            //(chart.Series[0] as LineSeries).ItemsSource = guidata;
+            radchart = _radchart;
         }
         public void TimerStarter()
-        {
+        {         
             _timer.Start();
         }
         public void TimerStopper()
@@ -85,34 +85,77 @@ namespace ioT
         private void _timer_Tick(object sender, object e)
         {
             _timer.Stop();
+            radchart.DataContext = null;
+            guidata = new float[99];
+            int arraysize = 0;
             
             switch (crrsenstodisp)
             {
                 case 0:
-                    //guidata = new List<DataSet>(lightsen);
-                    (chart.Series[0] as LineSeries).ItemsSource = lightsen;
+                    if(lightsen.Count < 99)
+                    {
+                        arraysize = lightsen.Count - 1;
+                    }
+                    else
+                    {
+                        arraysize = 99;
+                    }
+                    for (int i = 0; i < arraysize; i++)
+                    {
+                        guidata[i] = lightsen[i].Amount - 1;
+
+                    }
                     break;
                 case 1:
-                    //guidata = new List<DataSet>(microsen);
-                    (chart.Series[0] as LineSeries).ItemsSource = microsen;
+                    if (microsen.Count < 99)
+                    {
+                        arraysize = microsen.Count - 1;
+                    }
+                    else
+                    {
+                        arraysize = 99;
+                    }
+                    for (int i = 0; i < arraysize; i++)
+                    {
+                        guidata[i] = microsen[i].Amount;
+
+                    }
                     break;
                 case 2:
-                    //guidata = new List<DataSet>(thermalsen);
-                    (chart.Series[0] as LineSeries).ItemsSource = thermalsen;
+                    if (thermalsen.Count < 99)
+                    {
+                        arraysize = thermalsen.Count - 1;
+                    }
+                    else
+                    {
+                        arraysize = 99;
+                    }
+                    for (int i = 0; i < arraysize; i++)
+                    {
+                        guidata[i] = thermalsen[i].Amount;
+
+                    }
                     break;
                 case 3:
-                    //guidata = new List<DataSet>(humidsen);
-                    (chart.Series[0] as LineSeries).ItemsSource = humidsen;
+                    if (humidsen.Count < 99)
+                    {
+                        arraysize = humidsen.Count - 1;
+                    }
+                    else
+                    {
+                        arraysize = 99;
+                    }
+                    for (int i = 0; i < arraysize; i++)
+                    {
+                        guidata[i] = humidsen[i].Amount;
+
+                    }
                     break;
                 default:
-                    (chart.Series[0] as LineSeries).ItemsSource = null;
+                    guidata = null;
                     break;
             }
-            
-            (chart.Series[0] as LineSeries).Refresh();
-            (chart.Series[0] as LineSeries).ReleasePointerCaptures();
-
-            //(chart.Series[0] as LineSeries).ItemsSource = null;
+            radchart.DataContext = guidata;
             _timer.Start();
 
         }
@@ -173,7 +216,6 @@ namespace ioT
         {
             thsensrate.ItemsSource = val;
         }
-
         public void st1tost2()
         {
             conimage.Source = new BitmapImage(new Uri("ms-appx:///Assets/connected.png"));
@@ -220,8 +262,6 @@ namespace ioT
             user.IsEnabled = true;
             pass.IsEnabled = true;
             senname.IsEnabled = true;
-
-
         }
         public void st3tost2()
         {
@@ -264,7 +304,6 @@ namespace ioT
             calstage = 0;
             pre.IsEnabled = false;
             calmes.Text = "Dim the Light sensor and Press next";
-
         }
         public int getCalStage()
         {
@@ -295,6 +334,21 @@ namespace ioT
         public int getTHsensSelectedRate()
         {
             return thsensrate.SelectedIndex;
+        }
+        public void setLogger(string s)
+        {
+            string temp = loger.Text;
+            int numLines = temp.Length - temp.Replace(Environment.NewLine, string.Empty).Length;
+
+            if(numLines >= 3)
+            {
+                string[] lines = temp.Split(Environment.NewLine.ToCharArray()).Skip(1).ToArray();
+                temp = string.Join(Environment.NewLine, lines);
+                
+            }
+            temp += Environment.NewLine + s;
+            loger.Text = temp;
+
         }
 
 

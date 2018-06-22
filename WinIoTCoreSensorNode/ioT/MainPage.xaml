@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:charting="using:WinRTXamlToolkit.Controls.DataVisualization.Charting"
+    xmlns:telerikChart="using:Telerik.UI.Xaml.Controls.Chart"
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -75,22 +76,24 @@
             <TextBlock x:Name="calmes" HorizontalAlignment="Stretch" Margin="0,825,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30" Width="790" Height="45"/>
 
         </Grid>
-        <RichTextBlock x:Name="loger" HorizontalAlignment="Stretch" Height="180" VerticalAlignment="Bottom" Width="1680" d:IsLocked="True">
-            <Paragraph>
-                <Run Text="RichTextBlock"/>
-            </Paragraph>
-        </RichTextBlock>
+        <TextBox x:Name="logbox" HorizontalAlignment="Stretch" Margin="0,920,0,0" Text="" VerticalAlignment="Bottom" Width="1680" Height="180" AcceptsReturn="True"/>
         <Grid x:Name="page1" HorizontalAlignment="Stretch" Height="900" VerticalAlignment="Top" Width="1680">
-
-            <charting:Chart x:Name="chart" HorizontalAlignment="Stretch" VerticalAlignment="Top" Margin="4,150,0,0" Width="1400" Height="700">
-                <charting:LineSeries IndependentValuePath="Times" DependentValuePath="Amount" IsSelectionEnabled="True"></charting:LineSeries>
-            </charting:Chart>
+            <telerikChart:RadCartesianChart x:Name="radChart" Width="1400" Height="700">
+                <telerikChart:RadCartesianChart.HorizontalAxis>
+                    <telerikChart:CategoricalAxis/>
+                </telerikChart:RadCartesianChart.HorizontalAxis>
+                <telerikChart:RadCartesianChart.VerticalAxis>
+                    <telerikChart:LinearAxis/>
+                </telerikChart:RadCartesianChart.VerticalAxis>
+                <telerikChart:LineSeries ItemsSource="{Binding}"/>
+            </telerikChart:RadCartesianChart>
             <Button x:Name="lightsen" Content="Light Sensor" HorizontalAlignment="Left" Margin="300,50,0,0" VerticalAlignment="Top" FontSize="20" Click="lightsen_Click"/>
             <Button x:Name="microsen" Content="Microphone" HorizontalAlignment="Left" Margin="600,50,0,0" VerticalAlignment="Top" FontSize="20" Click="microsen_Click"/>
             <Button x:Name="thermalsen" Content="Thermal Sensor" HorizontalAlignment="Right" Margin="530,50,600,0" VerticalAlignment="Top" FontSize="20" Click="thermalsen_Click"/>
             <Button x:Name="humidsen" Content="Humidity Sensor" HorizontalAlignment="Right" Margin="698,50,300,0" VerticalAlignment="Top" FontSize="20" Click="humidsen_Click"/>
-            <Button x:Name="stopshow" Content="STOP" HorizontalAlignment="Left" Margin="120,50,0,0" VerticalAlignment="Top" Width="83" Click="stopshow_Click"/>
+            <Button x:Name="stopshow" Content="STOP" HorizontalAlignment="Left" Margin="120,50,0,0" VerticalAlignment="Top" Width="108" Click="stopshow_Click" Height="39"/>
         </Grid>
+        
 
 
     </Grid>

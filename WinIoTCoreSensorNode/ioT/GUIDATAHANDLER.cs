@@ -36,30 +36,14 @@ namespace ioT
             //Your Functuion Goes Here
             Connected();
         }
-        public void NowConnecting()
-        {
-            //Call this When you are Connecting
-        }
         public void Connected()
         {
             //Call This when you are Connected
             vis.st1tost2();
         }
-        public void getSamplingRate(int lightindex, int microindex, int thindex)
-        {
-            //Your code Goes Here
-        }
-        public void getDimLightCal()
-        {
-            //Your Code Goes Here
-        }
-        public void getLightLightCal()
-        {
-            //Your Code Goes Here
-        }
         public void writetologger(string s)
         {
-           
+            vis.setLogger(s);
         }
         public int getlightsamplingrate()
         {
@@ -75,7 +59,7 @@ namespace ioT
         }
         public void addDATASETtoLightSensor(double time, float value)
         {
-            if(vis.lightsen.Count > 150)
+            if(vis.lightsen.Count > 100)
             {
                 vis.lightsen.RemoveAt(0);
             }
@@ -84,7 +68,7 @@ namespace ioT
         }
         public void addDATASETtomicrophoneSensor(double time, float value)
         {
-            if (vis.microsen.Count > 150)
+            if (vis.microsen.Count > 100)
             {
                 vis.microsen.RemoveAt(0);
             }
@@ -93,7 +77,7 @@ namespace ioT
         }
         public void addDATASETtoThermalSensor(double time, float value)
         {
-            if (vis.thermalsen.Count > 150)
+            if (vis.thermalsen.Count > 100)
             {
                 vis.thermalsen.RemoveAt(0);
             }
@@ -102,7 +86,7 @@ namespace ioT
         }
         public void addDATASETtoHumidSensor(double time, float value)
         {
-            if (vis.humidsen.Count >150)
+            if (vis.humidsen.Count >100)
             {
                 vis.humidsen.RemoveAt(0);
             }
