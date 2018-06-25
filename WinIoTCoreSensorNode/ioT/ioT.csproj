@@ -116,6 +116,10 @@
     <Content Include="Assets\left.png" />
     <Content Include="Assets\right.png" />
     <Content Include="Assets\up.png" />
+    <Content Include="DLLs\Telerik.Core.dll" />
+    <Content Include="DLLs\Telerik.UI.Xaml.Chart.UWP.dll" />
+    <Content Include="DLLs\Telerik.UI.Xaml.DataVisualization.UWP.dll" />
+    <Content Include="DLLs\Telerik.UI.Xaml.Primitives.UWP.dll" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
