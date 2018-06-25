@@ -6,22 +6,20 @@ services:
     volumes:
       - ./data_integration:/usr/src/app
     ports:
-      - 5001:80
+      - 82:80
       
   data-processing:
-    build: ./data_integration
+    build: ./data_processing
     volumes:
-      - ./data_integration:/usr/src/app
+      - ./data_processing:/usr/src/app
     ports:
-      - 5001:80
-    depends_on:
-      - data-integration
+      - 81:80
 
   website:
     image: php:apache
     volumes:
       - ./website:/var/www/html
     ports:
-      - 5000:80
+      - 80:80
     depends_on:
       - data-processing
