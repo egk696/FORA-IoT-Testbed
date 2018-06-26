@@ -7,6 +7,7 @@ Visualizes probability of rain, latest sensor data and provides report logging.
 
 # Test and Run
 1) Simply start the script 'webservice.py':
-         $ python webservice.py <port>
+
+         $ python webservice.py 8080
 
 2) Navigate to http://localhost:8080/
