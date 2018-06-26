@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+        <meta name="description" content="IoT-Cloud-Testbed Dashboard">
+        <meta name="author" content="Eleftherios Kyriakakis">
+        <link rel="icon" href="favicon.ico">
+    
+        <title>Dashboard for IoT-Cloud-Testbed</title>
+
+        <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    
+        <!-- Custom styles for this template -->
+        <link href="dashboard.css" rel="stylesheet">
+    
+        <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container-fluid">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">IoT-Cloud-Testbed</a>
+                </div>
+                <div id="navbar" class="navbar-collapse collapse">
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="https://github.com/egk696/IoT-Cloud-Testbed" target="_blank">GitHub Repository</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-sm-3 col-md-2 sidebar">
+                <ul class="nav nav-sidebar">
+                    <li id="overviewLi" class="active"><a id="overviewBtn" href="#">Overview <span class="sr-only">(current)</span></a></li>
+                    <li id="analyticsLi"><a id="analyticsBtn" href="#">Analytics</a></li>
+                    <li id="reportsLi"><a id="reportsBtn" href="#">Reports</a></li>
+                </ul>
+                </div>
+                    <div id="dashboard" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+                </div>
+            </div>
+        </div>      
+        <!-- Bootstrap core JavaScript
+        ================================================== -->
+        <!-- Placed at the end of the document so the pages load faster -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>  
+        <!-- Latest compiled and minified JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+        <!-- Latest Chart JS library -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+        <!-- Now Our Code -->
+        <script>
+            function refresh_sensorReadings() {
+                var currentTime = $.now()/1000;
+                $(".sensA_ts").html(currentTime);
+                $(".sensB_ts").html(currentTime);
+            }
+            window.setInterval(refresh_sensorReadings, 1000);
+            $("document").ready(function(){
+                $("#dashboard").load("overview.html");
+                $("#overviewBtn").addClass("active");
+                console.log("loaded overview page");
+            });
+            $("#overviewBtn").click(function(){
+                $("#dashboard").load("overview.html");
+                $("#overviewLi").addClass("active");
+                $("#analyticsLi").removeClass("active");
+                $("#reportsLi").removeClass("active");
+                console.log("loaded overview page");
+            });
+            $("#analyticsBtn").click(function(){
+                $("#dashboard").load("analytics.html");
+                $("#overviewLi").removeClass("active");
+                $("#analyticsLi").addClass("active");
+                $("#reportsLi").removeClass("active");
+                console.log("loaded analytics page");
+            });
+            $("#reportsBtn").click(function(){
+                $("#dashboard").load("reports.html");
+                $("#overviewLi").removeClass("active");
+                $("#analyticsLi").removeClass("active");
+                $("#reportsLi").addClass("active");
+                console.log("loaded reports page");
+            });
+        </script>
+    </body>
+</html>
