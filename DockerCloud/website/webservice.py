@@ -2,9 +2,9 @@ import SimpleHTTPServer
 import SocketServer
 
 def run(port=8080):
-    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
+    Handler = http.server.SimpleHTTPRequestHandler
     httpd = SocketServer.TCPServer(("0.0.0.0", port), Handler)
-    print "serving at port", port
+    print ("serving at port", port)
     httpd.serve_forever()
 
 def get_bytes_from_file(filename):  

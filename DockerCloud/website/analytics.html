@@ -26,9 +26,9 @@
 
     <body>
         <h2 class="sub-header">Real-time Temperature Graph</h2>
-        <canvas id="tempChart" width="400" height="100"></canvas>
+        <canvas id="tempChart" width="400" height="80"></canvas>
         <h2 class="sub-header">Real-time Humidity Graph</h2>
-        <canvas id="humChart" width="400" height="100"></canvas>
+        <canvas id="humChart" width="400" height="80"></canvas>
         
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -40,14 +40,14 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
         <!-- Now Our Code -->
         <script>
-            var ctx = document.getElementById("humChart").getContext('2d');
+            var ctx = document.getElementById("tempChart").getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ["Node A", "Node B"],
                     datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
+                        label: '&deg;C',
+                        data: [25, 19],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)'
@@ -71,14 +71,14 @@
             });
         </script>
          <script>
-            var ctx = document.getElementById("tempChart").getContext('2d');
+            var ctx = document.getElementById("humChart").getContext('2d');
             var myChart = new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: ["Node A", "Node B"],
                     datasets: [{
-                        label: '# of Votes',
-                        data: [12, 19, 3, 5, 2, 3],
+                        label: '% Humidity',
+                        data: [70, 62],
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
                             'rgba(54, 162, 235, 0.2)'
