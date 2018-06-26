@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ namespace ioT
 {
     class GUIDATAHANDLER
     {
+        const int max_vals = 100;
         public List<string> lightrate_local;
         public List<string> microphonerate_local;
         public List<string> thrate_local;
@@ -57,41 +59,32 @@ namespace ioT
         {
             return vis.getTHsensSelectedRate();
         }
-        public void addDATASETtoLightSensor(double time, float value)
+        public void addDATASETtoLightSensor(DateTime time, float value)
         {
-            if(vis.lightsen.Count > 100)
-            {
-                vis.lightsen.RemoveAt(0);
-            }
-            vis.lightsen.Add(new DataSet() { Times = time, Amount = value });
-
+            vis.lightsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
         }
-        public void addDATASETtomicrophoneSensor(double time, float value)
+        public void addDATASETtomicrophoneSensor(DateTime time, float value)
         {
-            if (vis.microsen.Count > 100)
-            {
-                vis.microsen.RemoveAt(0);
-            }
-            vis.microsen.Add(new DataSet() { Times = time, Amount = value });
-
+            vis.microsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
         }
-        public void addDATASETtoThermalSensor(double time, float value)
+        public void addDATASETtoThermalSensor(DateTime time, float value)
         {
-            if (vis.thermalsen.Count > 100)
-            {
-                vis.thermalsen.RemoveAt(0);
-            }
-            vis.thermalsen.Add(new DataSet() { Times = time, Amount = value });
-
+            vis.thermalsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
         }
-        public void addDATASETtoHumidSensor(double time, float value)
+        public void addDATASETtoHumidSensor(DateTime time, float value)
         {
-            if (vis.humidsen.Count >100)
-            {
-                vis.humidsen.RemoveAt(0);
-            }
-            vis.humidsen.Add(new DataSet() { Times = time, Amount = value });
+            vis.humidsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
+        }
+    }
 
+    public static class Extensions
+    {
+        public static void _Enqueue<T>(this ConcurrentQueue<T> queue, T val, int max = int.MaxValue)
+        {
+            // Not properly threadsafe but safe enough
+            if (queue.Count >= max)
+                queue.TryDequeue(out var dummy);
+            queue.Enqueue(val);
         }
     }
 }

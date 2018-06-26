@@ -108,6 +108,29 @@
       <SubType>Designer</SubType>
     </AppxManifest>
     <None Include="ioT_TemporaryKey.pfx" />
+    <None Include="libs\Telerik.Core.pri" />
+    <None Include="libs\Telerik.UI.Xaml.Chart.UWP.pri" />
+    <None Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\Generic.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\ThemeResourcesDark.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\ThemeResourcesHighContrast.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\ThemeResourcesLight.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.DataVisualization.UWP.pri" />
+    <None Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\Generic.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\Resources.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\ThemeResourcesDark.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\ThemeResourcesHighContrast.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\ThemeResourcesLight.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP.pri" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\Generic.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\HubTilePalette.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\Resources.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\SharedResources.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeColorsDark.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeColorsHighContrast.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeColorsLight.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeResourcesDark.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeResourcesHighContrast.xbf" />
+    <None Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeResourcesLight.xbf" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\connected.png" />
@@ -116,10 +139,22 @@
     <Content Include="Assets\left.png" />
     <Content Include="Assets\right.png" />
     <Content Include="Assets\up.png" />
-    <Content Include="DLLs\Telerik.Core.dll" />
-    <Content Include="DLLs\Telerik.UI.Xaml.Chart.UWP.dll" />
-    <Content Include="DLLs\Telerik.UI.Xaml.DataVisualization.UWP.dll" />
-    <Content Include="DLLs\Telerik.UI.Xaml.Primitives.UWP.dll" />
+    <Content Include="libs\Telerik.Core.dll" />
+    <Content Include="libs\Telerik.Core.pdb" />
+    <Content Include="libs\Telerik.Core.XML" />
+    <Content Include="libs\Telerik.Core\Properties\default.rd.xml" />
+    <Content Include="libs\Telerik.UI.Xaml.Chart.UWP.dll" />
+    <Content Include="libs\Telerik.UI.Xaml.Chart.UWP.pdb" />
+    <Content Include="libs\Telerik.UI.Xaml.Chart.UWP\Telerik.UI.Xaml.Chart.UWP.xr.xml" />
+    <Content Include="libs\Telerik.UI.Xaml.Chart.XML" />
+    <Content Include="libs\Telerik.UI.Xaml.DataVisualization.UWP.dll" />
+    <Content Include="libs\Telerik.UI.Xaml.DataVisualization.UWP.pdb" />
+    <Content Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Telerik.UI.Xaml.DataVisualization.UWP.xr.xml" />
+    <Content Include="libs\Telerik.UI.Xaml.DataVisualization.XML" />
+    <Content Include="libs\Telerik.UI.Xaml.Primitives.UWP.dll" />
+    <Content Include="libs\Telerik.UI.Xaml.Primitives.UWP.pdb" />
+    <Content Include="libs\Telerik.UI.Xaml.Primitives.UWP\Telerik.UI.Xaml.Primitives.UWP.xr.xml" />
+    <Content Include="libs\Telerik.UI.Xaml.Primitives.XML" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
     <Content Include="Assets\SplashScreen.scale-200.png" />
@@ -134,6 +169,82 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\ThemeResourcesDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\ThemeResourcesHighContrast.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Chart.UWP\Themes\ThemeResourcesLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\Resources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\ThemeResourcesDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\ThemeResourcesHighContrast.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.DataVisualization.UWP\Themes\ThemeResourcesLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\Generic.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\HubTilePalette.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\Resources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\SharedResources.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeColorsDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeColorsHighContrast.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeColorsLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeResourcesDark.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeResourcesHighContrast.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="libs\Telerik.UI.Xaml.Primitives.UWP\Themes\ThemeResourcesLight.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

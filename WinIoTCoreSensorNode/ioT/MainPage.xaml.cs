@@ -16,6 +16,7 @@ using GrovePi;
 using GrovePi.Sensors;
 using System.Threading.Tasks;
 using WinRTXamlToolkit.Controls.DataVisualization.Charting;
+using System.Threading;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -32,8 +33,6 @@ namespace ioT
         Windows.UI.Xaml.DispatcherTimer _timer_2;
         Windows.UI.Xaml.DispatcherTimer _timer_3;
 
-        DateTime t_from_start;
-
         VisualEffect vis;
         GUIDATAHANDLER handler;
         ILightSensor lightsensor_mod = DeviceFactory.Build.LightSensor(Pin.AnalogPin0);
@@ -41,8 +40,8 @@ namespace ioT
         IDHTTemperatureAndHumiditySensor THsensor_mod = DeviceFactory.Build.DHTTemperatureAndHumiditySensor(Pin.DigitalPin3, DHTModel.Dht11);
         
 
-        int max_sensor_val = 0;
-        int min_sensor_val = 0;
+        volatile int max_sensor_val = 0;
+        volatile int min_sensor_val = 0;
 
         //Sample Entries
         public List<string> lightrate_sample = new List<string>();
@@ -79,8 +78,7 @@ namespace ioT
             handler.setLightSensRateValues(lightrate_sample);
             handler.setMicrophoneSensRateValues(microphonerate_sample);
             handler.setTHSensRateValues(thrate_sample);
-
-            t_from_start = DateTime.Now;
+            
             _timer_1 = new Windows.UI.Xaml.DispatcherTimer();
             _timer_1.Tick += LightSensorRead;
             _timer_2 = new Windows.UI.Xaml.DispatcherTimer();
@@ -193,15 +191,46 @@ namespace ioT
         {
             vis.setVisualTo(3);
         }
+        
         private void LightSensorRead(object sender, object e)
         {
-            _timer_1.Stop();
-            int sensorvalue = lightsensor_mod.SensorValue();
-            sensorvalue = Convert.ToInt32(((sensorvalue-min_sensor_val)/((max_sensor_val-min_sensor_val)*1.0)) * 100);
-            double time = DateTime.Now.Subtract(t_from_start).TotalMilliseconds/1000;
-            handler.addDATASETtoLightSensor(time, sensorvalue);
-            _timer_1.Start();
+            int sensorvalue;
+            lock (lightsensor_mod)
+            {
+                sensorvalue = lightsensor_mod.SensorValue();
+            }
+            sensorvalue = Convert.ToInt32(((sensorvalue - min_sensor_val) / ((max_sensor_val - min_sensor_val) * 1.0)) * 100);
+            handler.addDATASETtoLightSensor(DateTime.Now, sensorvalue);
         }
+
+        private void SoundSensorRead(object sender, object e)
+        {
+            int sensorvalue;
+            lock (lightsensor_mod)
+            {
+                sensorvalue = soundsensor_mod.SensorValue();
+            }
+            handler.addDATASETtomicrophoneSensor(DateTime.Now, sensorvalue);
+        }
+
+        private void THSensorRead(object sender, object e)
+        {
+            float sensortemp;
+            // Same for Humidity.  
+            float sensorhum;
+            lock (THsensor_mod)
+            {
+                THsensor_mod.Measure();
+                sensortemp = Convert.ToSingle(THsensor_mod.TemperatureInCelsius);
+                // Same for Humidity.  
+                sensorhum = Convert.ToSingle(THsensor_mod.Humidity);
+            }
+            
+            var time = DateTime.Now;
+            handler.addDATASETtoThermalSensor(time, sensortemp);
+            handler.addDATASETtoHumidSensor(time, sensorhum);
+        }
+
         private void setLightRate()
         {
             int res = handler.getlightsamplingrate();
@@ -223,7 +252,6 @@ namespace ioT
                     _timer_1.Interval = new TimeSpan(0, 0, 0, 1, 0);
                     break;
             }
-            
         }
         private void setSoundRate()
         {
@@ -246,29 +274,8 @@ namespace ioT
                     _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 10);
                     break;
             }
-
         }
-        private void SoundSensorRead(object sender, object e)
-        {
-            _timer_2.Stop();
-            int sensorvalue = soundsensor_mod.SensorValue();
-            double time = DateTime.Now.Subtract(t_from_start).TotalMilliseconds / 1000;
-            handler.addDATASETtomicrophoneSensor(time, sensorvalue);
-            _timer_2.Start();
-        }
-        private void THSensorRead(object sender, object e)
-        {
-            _timer_3.Stop();
-            THsensor_mod.Measure();
-            float sensortemp = Convert.ToSingle( THsensor_mod.TemperatureInCelsius);
-            // Same for Humidity.  
-            float sensorhum = Convert.ToSingle( THsensor_mod.Humidity);
-
-            double time = DateTime.Now.Subtract(t_from_start).TotalMilliseconds / 1000;
-            handler.addDATASETtoThermalSensor(time, sensortemp);
-            handler.addDATASETtoHumidSensor(time, sensorhum);
-            _timer_3.Start();
-        }
+        
         private void setTHRate()
         {
             int res = handler.getthsamplingrate();
@@ -287,7 +294,6 @@ namespace ioT
                     _timer_3.Interval = new TimeSpan(0, 0, 0, 2, 0);
                     break;
             }
-
         }
 
         private void stopshow_Click(object sender, RoutedEventArgs e)

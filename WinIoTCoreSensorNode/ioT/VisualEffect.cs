@@ -9,12 +9,13 @@ using Windows.UI.Xaml.Media.Imaging;
 using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 using System.Runtime.Serialization;
 using Telerik.UI.Xaml.Controls.Chart;
+using System.Collections.Concurrent;
 
 namespace ioT
 {
     public class DataSet
     {
-        public double Times { get; set; }
+        public DateTime Timestamp { get; set; }
         public float Amount { get; set; }
     }
     class VisualEffect
@@ -43,11 +44,10 @@ namespace ioT
         int calstage = 0;
         int crrsenstodisp = 0;
         private int curr_page = 0;
-        public List<DataSet> lightsen = new List<DataSet>();
-        public List<DataSet> microsen = new List<DataSet>();
-        public List<DataSet> thermalsen = new List<DataSet>();
-        public List<DataSet> humidsen = new List<DataSet>();
-        float[] guidata = new float[99];
+        public ConcurrentQueue<DataSet> lightsen = new ConcurrentQueue<DataSet>();
+        public ConcurrentQueue<DataSet> microsen = new ConcurrentQueue<DataSet>();
+        public ConcurrentQueue<DataSet> thermalsen = new ConcurrentQueue<DataSet>();
+        public ConcurrentQueue<DataSet> humidsen = new ConcurrentQueue<DataSet>();
         public VisualEffect(Button _forwardBut, Button _backwardBut, Grid _page0, ComboBox _lightsensrate, ComboBox _microsenrate, ComboBox _thsensrate, Button _ft2, Button _ft3, Button _bt1, Button _bt2, Image _conimage,TextBox _user, PasswordBox _pass, TextBox _sen, TextBlock _calmes, Button _pre, Button _forw, TextBox _loger,Grid _page1,RadCartesianChart _radchart)
         {
             _timer = new Windows.UI.Xaml.DispatcherTimer();
@@ -86,78 +86,25 @@ namespace ioT
         {
             _timer.Stop();
             radchart.DataContext = null;
-            guidata = new float[99];
-            int arraysize = 0;
-            
             switch (crrsenstodisp)
             {
                 case 0:
-                    if(lightsen.Count < 99)
-                    {
-                        arraysize = lightsen.Count - 1;
-                    }
-                    else
-                    {
-                        arraysize = 99;
-                    }
-                    for (int i = 0; i < arraysize; i++)
-                    {
-                        guidata[i] = lightsen[i].Amount - 1;
-
-                    }
+                    radchart.DataContext = lightsen.Select(f => f.Amount).ToArray();
                     break;
                 case 1:
-                    if (microsen.Count < 99)
-                    {
-                        arraysize = microsen.Count - 1;
-                    }
-                    else
-                    {
-                        arraysize = 99;
-                    }
-                    for (int i = 0; i < arraysize; i++)
-                    {
-                        guidata[i] = microsen[i].Amount;
-
-                    }
+                    radchart.DataContext = microsen.Select(f => f.Amount).ToArray();
                     break;
                 case 2:
-                    if (thermalsen.Count < 99)
-                    {
-                        arraysize = thermalsen.Count - 1;
-                    }
-                    else
-                    {
-                        arraysize = 99;
-                    }
-                    for (int i = 0; i < arraysize; i++)
-                    {
-                        guidata[i] = thermalsen[i].Amount;
-
-                    }
+                    radchart.DataContext = thermalsen.Select(f => f.Amount).ToArray();
                     break;
                 case 3:
-                    if (humidsen.Count < 99)
-                    {
-                        arraysize = humidsen.Count - 1;
-                    }
-                    else
-                    {
-                        arraysize = 99;
-                    }
-                    for (int i = 0; i < arraysize; i++)
-                    {
-                        guidata[i] = humidsen[i].Amount;
-
-                    }
+                    radchart.DataContext = humidsen.Select(f => f.Amount).ToArray();
                     break;
                 default:
-                    guidata = null;
+                    radchart.DataContext = null;
                     break;
             }
-            radchart.DataContext = guidata;
             _timer.Start();
-
         }
 
         public void setHome()
@@ -187,10 +134,11 @@ namespace ioT
             pre.IsEnabled = false;
             forw.IsEnabled = false;
             calstage = 0;
-            lightsen.Clear();
-            microsen.Clear();
-            thermalsen.Clear();
-            humidsen.Clear();
+            // Stupid way to empty the queues
+            while(lightsen.TryDequeue(out var dummy));
+            while (microsen.TryDequeue(out var dummy)) ;
+            while (thermalsen.TryDequeue(out var dummy));
+            while (humidsen.TryDequeue(out var dummy));
 
         }
         public int BKpressed()
@@ -348,9 +296,6 @@ namespace ioT
             }
             temp += Environment.NewLine + s;
             loger.Text = temp;
-
         }
-
-
     }
 }
