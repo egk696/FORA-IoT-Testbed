@@ -7,6 +7,7 @@ services:
       - ./data_integration:/usr/src/app
     ports:
       - 82:80
+    restart: on-failure
       
   data-processing:
     build: ./data_processing
@@ -14,6 +15,9 @@ services:
       - ./data_processing:/usr/src/app
     ports:
       - 81:80
+    depends_on:
+      - data-integration
+    restart: on-failure
 
   website:
     image: php:apache
@@ -23,3 +27,4 @@ services:
       - 80:80
     depends_on:
       - data-processing
+    restart: on-failure
