@@ -17,6 +17,9 @@ using GrovePi.Sensors;
 using System.Threading.Tasks;
 using WinRTXamlToolkit.Controls.DataVisualization.Charting;
 using System.Threading;
+using System.Net.Http;
+using Newtonsoft.Json;
+using System.Text;
 
 
 // The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -33,6 +36,8 @@ namespace ioT
         Windows.UI.Xaml.DispatcherTimer _timer_2;
         Windows.UI.Xaml.DispatcherTimer _timer_3;
 
+        private static readonly HttpClient client = new HttpClient();
+
         VisualEffect vis;
         GUIDATAHANDLER handler;
         ILightSensor lightsensor_mod = DeviceFactory.Build.LightSensor(Pin.AnalogPin0);
@@ -42,6 +47,7 @@ namespace ioT
 
         volatile int max_sensor_val = 0;
         volatile int min_sensor_val = 0;
+        volatile string cloud_uri = "http://192.168.234.40:82/";
 
         //Sample Entries
         public List<string> lightrate_sample = new List<string>();
@@ -97,10 +103,10 @@ namespace ioT
             }
             else
             {
-                vis.setHome();
                 _timer_1.Stop();
                 _timer_2.Stop();
                 _timer_3.Stop();
+                vis.setHome();
             }
         }
 
@@ -200,7 +206,10 @@ namespace ioT
                 sensorvalue = lightsensor_mod.SensorValue();
             }
             sensorvalue = Convert.ToInt32(((sensorvalue - min_sensor_val) / ((max_sensor_val - min_sensor_val) * 1.0)) * 100);
-            handler.addDATASETtoLightSensor(DateTime.Now, sensorvalue);
+            var timestamp = DateTime.Now;
+            handler.addDATASETtoLightSensor(timestamp, sensorvalue);
+
+            SendToCloud(new { sensorid = vis.senname.Text, lightvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
         }
 
         private void SoundSensorRead(object sender, object e)
@@ -210,7 +219,9 @@ namespace ioT
             {
                 sensorvalue = soundsensor_mod.SensorValue();
             }
-            handler.addDATASETtomicrophoneSensor(DateTime.Now, sensorvalue);
+            var timestamp = DateTime.Now;
+            handler.addDATASETtomicrophoneSensor(timestamp, sensorvalue);
+            SendToCloud(new { sensorid = vis.senname.Text, soundvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
         }
 
         private void THSensorRead(object sender, object e)
@@ -226,9 +237,14 @@ namespace ioT
                 sensorhum = Convert.ToSingle(THsensor_mod.Humidity);
             }
             
-            var time = DateTime.Now;
-            handler.addDATASETtoThermalSensor(time, sensortemp);
-            handler.addDATASETtoHumidSensor(time, sensorhum);
+            var timestamp = DateTime.Now;
+            handler.addDATASETtoThermalSensor(timestamp, sensortemp);
+            handler.addDATASETtoHumidSensor(timestamp, sensorhum);
+
+            SendToCloud(new { sensorid = vis.senname.Text,
+                tempvals = new[] { new { timestamp = timestamp, val = sensortemp } },
+                humidvals = new[] { new { timestamp = timestamp, val = sensorhum } }
+            });
         }
 
         private void setLightRate()
@@ -299,6 +315,18 @@ namespace ioT
         private void stopshow_Click(object sender, RoutedEventArgs e)
         {
             vis.setVisualTo(5);
+        }
+
+        private void SendToCloud<T>(T val)
+        {
+            var uri = new Uri(cloud_uri);
+            var json = JsonConvert.SerializeObject(val);
+            var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
+            // Fire and forget
+            Task.Run(async () =>
+            {
+                var resp = await client.PostAsync(uri, stringContent);
+            });
         }
     }
 }

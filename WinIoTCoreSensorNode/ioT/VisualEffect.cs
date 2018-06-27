@@ -33,7 +33,7 @@ namespace ioT
         Button bt2;
         TextBox user;
         PasswordBox pass;
-        TextBox senname;
+        public TextBox senname;
         Image conimage;
         TextBlock calmes;
         Button pre;
@@ -89,16 +89,16 @@ namespace ioT
             switch (crrsenstodisp)
             {
                 case 0:
-                    radchart.DataContext = lightsen.Select(f => f.Amount).ToArray();
+                    radchart.DataContext = lightsen.Take(100).Select(f => f.Amount).ToArray();
                     break;
                 case 1:
-                    radchart.DataContext = microsen.Select(f => f.Amount).ToArray();
+                    radchart.DataContext = microsen.Take(100).Select(f => f.Amount).ToArray();
                     break;
                 case 2:
-                    radchart.DataContext = thermalsen.Select(f => f.Amount).ToArray();
+                    radchart.DataContext = thermalsen.Take(100).Select(f => f.Amount).ToArray();
                     break;
                 case 3:
-                    radchart.DataContext = humidsen.Select(f => f.Amount).ToArray();
+                    radchart.DataContext = humidsen.Take(100).Select(f => f.Amount).ToArray();
                     break;
                 default:
                     radchart.DataContext = null;
