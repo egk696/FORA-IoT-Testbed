@@ -40,6 +40,7 @@ namespace ioT
 
         VisualEffect vis;
         GUIDATAHANDLER handler;
+        object senslck = new object();
         ILightSensor lightsensor_mod = DeviceFactory.Build.LightSensor(Pin.AnalogPin0);
         ISoundSensor soundsensor_mod = DeviceFactory.Build.SoundSensor(Pin.AnalogPin1);
         IDHTTemperatureAndHumiditySensor THsensor_mod = DeviceFactory.Build.DHTTemperatureAndHumiditySensor(Pin.DigitalPin3, DHTModel.Dht11);
@@ -201,7 +202,7 @@ namespace ioT
         private void LightSensorRead(object sender, object e)
         {
             int sensorvalue;
-            lock (lightsensor_mod)
+            lock (senslck)
             {
                 sensorvalue = lightsensor_mod.SensorValue();
             }
@@ -211,11 +212,11 @@ namespace ioT
 
             SendToCloud(new { sensorid = vis.senname.Text, lightvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
         }
-
+        
         private void SoundSensorRead(object sender, object e)
         {
             int sensorvalue;
-            lock (lightsensor_mod)
+            lock (senslck)
             {
                 sensorvalue = soundsensor_mod.SensorValue();
             }
@@ -229,7 +230,7 @@ namespace ioT
             float sensortemp;
             // Same for Humidity.  
             float sensorhum;
-            lock (THsensor_mod)
+            lock (senslck)
             {
                 THsensor_mod.Measure();
                 sensortemp = Convert.ToSingle(THsensor_mod.TemperatureInCelsius);
@@ -326,6 +327,8 @@ namespace ioT
             Task.Run(async () =>
             {
                 var resp = await client.PostAsync(uri, stringContent);
+                if(!resp.IsSuccessStatusCode)
+                    vis.setLogger(resp.ToString());
             });
         }
     }
