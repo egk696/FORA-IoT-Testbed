@@ -232,7 +232,7 @@ namespace ioT
             curr_page = 1;
             Page0.Visibility = Windows.UI.Xaml.Visibility.Collapsed;
             forwardBut.IsEnabled = false;
-            backwardBut.Content = "Back";
+            backwardBut.Content = "Options";
             page1.Visibility = Windows.UI.Xaml.Visibility.Visible;
             setVisualTo(0);
         }
@@ -286,6 +286,11 @@ namespace ioT
             }
             temp += Environment.NewLine + s;
             loger.Text = temp;
+        }
+        public void setDefaultPage()
+        {
+            setHome();
+            setView();
         }
     }
 }

@@ -124,7 +124,8 @@ namespace ioT
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            vis.setHome();
+            //vis.setHome();
+            setDefault();
             
         }
         public void CloseApp()
@@ -330,6 +331,18 @@ namespace ioT
                 if(!resp.IsSuccessStatusCode)
                     vis.setLogger(resp.ToString());
             });
+        }
+        public void setDefault()
+        {
+            _timer_1.Interval = new TimeSpan(0, 0, 0, 1, 0);
+            _timer_2.Interval = new TimeSpan(0, 0, 0, 0, 30);
+            _timer_3.Interval = new TimeSpan(0, 0, 0, 2, 0);
+            min_sensor_val = 0;
+            max_sensor_val = 1024;
+            vis.setDefaultPage();
+            _timer_1.Start();
+            _timer_2.Start();
+            _timer_3.Start();
         }
     }
 }
