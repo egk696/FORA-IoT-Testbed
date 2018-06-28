@@ -25,81 +25,68 @@
     </head>
 
     <body>
-        <h2 class="sub-header">Real-time Temperature Graph</h2>
-        <canvas id="tempChart" width="400" height="80"></canvas>
-        <h2 class="sub-header">Real-time Humidity Graph</h2>
-        <canvas id="humChart" width="400" height="80"></canvas>
-        
+        <h2 class="sub-header">Live Temperature Graph</h2>
+        <canvas id="tempChart" width="1440" height="320"></canvas>
+        <h2 class="sub-header">Live Humidity Graph</h2>
+        <canvas id="humChart" width="1440" height="320"></canvas>
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>  
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
-        <!-- Latest Chart JS library -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
         <!-- Now Our Code -->
         <script>
-            var ctx = document.getElementById("tempChart").getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Node A", "Node B"],
-                    datasets: [{
-                        label: '&deg;C',
-                        data: [25, 19],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
+            Chart.defaults.global.legend = {
+                enabled: true
+            };
+            var options = {
+                legend: {
+                    display: true,
+                    labels: {
+                    fontColor: "rgba(24,24,24,1)",
                     }
-                }
-            });
-        </script>
-         <script>
-            var ctx = document.getElementById("humChart").getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ["Node A", "Node B"],
-                    datasets: [{
-                        label: '% Humidity',
-                        data: [70, 62],
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255,99,132,1)',
-                            'rgba(54, 162, 235, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
                 },
-                options: {
-                    scales: {
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero:true
-                            }
-                        }]
-                    }
-                }
-            });
+                animation: false,
+                scaleOverride : true,
+                    scaleSteps : 20,
+                    scaleStepWidth : 5,
+                    scaleStartValue : 0 
+            };
+            var ctx = document.getElementById("tempChart").getContext("2d");
+            var data = {
+                labels: ["Temperature"],
+                datasets: [{
+                    label: "Node A",
+                    fillColor: "rgba(220,151,151,0.5)",
+                    strokeColor: "rgba(220,205,205,1)",
+                    data: [0]
+                }, {
+                    label: "Node B",
+                    fillColor: "rgba(205,187,151,0.5)",
+                    strokeColor: "rgba(205,187,151,1)",
+                    data: [0]
+                }]
+            };
+            tempChart = new Chart(ctx).Line(data, options);
+            tempChartCount = 0;
+            var ctx = document.getElementById("humChart").getContext("2d");
+            var data = {
+                labels: ["Humidity"],
+                datasets: [{
+                    label: "Node A",
+                    fillColor: "rgba(151,151,220,0.5)",
+                    strokeColor: "rgba(151,151,220,1)",
+                    data: [0]
+                }, {
+                    label: "Node B",
+                    fillColor: "rgba(151,187,205,0.5)",
+                    strokeColor: "rgba(151,187,205,1)",
+                    data: [0]
+                }]
+            };
+            humChart = new Chart(ctx).Line(data, options);
+            humChartCount = 0;
         </script>
     </body>
 </html>

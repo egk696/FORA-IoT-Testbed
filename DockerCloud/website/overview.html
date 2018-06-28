@@ -16,7 +16,10 @@
     
         <!-- Custom styles for this template -->
         <link href="dashboard.css" rel="stylesheet">
-    
+
+        <!-- Epoch Charts styles -->
+        <link rel="stylesheet" type="text/css" href="epoch-0.8.4/dist/css/epoch.min.css">
+
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -29,14 +32,12 @@
 
         <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-                <h4>A.Rain Probability</h4>
-                <span class="text-muted">Probability of Rain</span>
+                <h4>Node.A Rain Probability</h4>
+                <canvas id="rainChartA" width="400" height="320"></canvas>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-                <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-                <h4>B.Rain Probability</h4>
-                <span class="text-muted">Something else</span>
+                <h4>Node.B Rain Probability</h4>
+                <canvas id="rainChartB" width="400" height="320"></canvas>
             </div>
         </div>
 
@@ -95,7 +96,46 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <!-- Now Our Code -->
         <script>
-            
+            Chart.defaults.global.legend = {
+                enabled: true
+            };
+            var options = {
+                legend: {
+                    display: true,
+                    labels: {
+                    fontColor: "rgba(24,24,24,1)",
+                    }
+                },
+                animation: true,
+                scaleOverride : true,
+                    scaleSteps : 20,
+                    scaleStepWidth : 5,
+                    scaleStartValue : 0 
+            };
+            var ctx = document.getElementById("rainChartA").getContext("2d");
+            var data = {
+                labels: ["Probability (%)"],
+                datasets: [{
+                    label: "Node A",
+                    fillColor: "rgba(151,187,220,0.5)",
+                    strokeColor: "rgba(151,187,220,1)",
+                    data: [47]
+                }]
+            };
+            rainChartA = new Chart(ctx).Bar(data, options);
+            rainChartACount = 0;
+            var ctx = document.getElementById("rainChartB").getContext("2d");
+            var data = {
+                labels: ["Probability (%)"],
+                datasets: [{
+                    label: "Node B",
+                    fillColor: "rgba(151,187,220,0.5)",
+                    strokeColor: "rgba(151,187,220,1)",
+                    data: [50]
+                }]
+            };
+            rainChartB = new Chart(ctx).Bar(data, options);
+            rainChartBCount = 0;
         </script>
     </body>
 </html>

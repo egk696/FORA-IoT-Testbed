@@ -2,7 +2,7 @@ import SimpleHTTPServer
 import SocketServer
 
 def run(port=8080):
-    Handler = http.server.SimpleHTTPRequestHandler
+    Handler = SimpleHTTPServer.SimpleHTTPRequestHandler
     httpd = SocketServer.TCPServer(("0.0.0.0", port), Handler)
     print ("serving at port", port)
     httpd.serve_forever()

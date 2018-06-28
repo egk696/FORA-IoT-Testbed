@@ -34,36 +34,62 @@
                         <span class="icon-bar"></span>
                         <span class="icon-bar"></span>
                     </button>
-                    <a class="navbar-brand" href="#">IoT-Cloud-Testbed</a>
+                    <a class="navbar-brand" rel="home" href="#" title="IoT-Cloud-Testbed">
+                        <span><img style="max-width:70px;margin-top: -14px;" src="fora_logo_new2.png"></span>
+                        <span style="color:antiquewhite">IoT-Cloud-Testbed</span>
+                    </a>
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="https://github.com/egk696/IoT-Cloud-Testbed" target="_blank">GitHub Repository</a></li>
+                        <li><a href="http://www.fora-etn.eu/" target="_blank">FORA European Training Network</a></li>
                     </ul>
                 </div>
             </div>
         </nav>
         
         <div class="container-fluid">
-            <div class="row">
+            <div class="page-row row">
                 <div class="col-sm-3 col-md-2 sidebar">
-                <ul class="nav nav-sidebar">
-                    <li id="overviewLi" class="active"><a id="overviewBtn" href="#">Overview <span class="sr-only">(current)</span></a></li>
-                    <li id="analyticsLi"><a id="analyticsBtn" href="#">Analytics</a></li>
-                    <li id="reportsLi"><a id="reportsBtn" href="#">Reports</a></li>
-                </ul>
-                <footer class="footer font-small blue pt-4 mt-4">
-                    <div class="footer-copyright text-center py-3">2018 Created By:
-                        <a href="https://www.linkedin.com/in/eleftherios-kyriakakis-48a7973b"> Eleftherios Kyriakakis</a>
+                    <ul class="nav nav-sidebar">
+                        <li id="overviewLi" class="active"><a id="overviewBtn" href="#">Overview</a></li>
+                        <li id="analyticsLi"><a id="analyticsBtn" href="#">Analytics</a></li>
+                        <li id="reportsLi"><a id="reportsBtn" href="#">Reports</a></li>
+                        <li>
+                            <div style="width: 100%; height: 20px; border-bottom: 1px solid #428bca; text-align: center">
+                                <span style="font-size: 20px; color:#428bca; background-color: #F5F5F5; padding: 0 10px;">
+                                    Options
+                                </span>
+                            </div>
+                        </li>
+                        <li><br/></li>
+                        <li>
+                            <div class="form-group">
+                                <label style="padding-left: 20px; padding-right: 20px;color:#428bca;" for="refreshRate">Refresh Rate (ms):</label>
+                                <input class="form-control" id="refreshRate" style="padding-left: 20px; padding-right: 20px;" style="width: 20%" type="text" name="refreshRate" placeholder="1000" value="1000"/>
+                            </div>
+                        </li>
+                    </ul>
+                    <!-- <div class="footer-logo">
+                        <img class="center-block" src="fora_logo_new2.png"/>
+                    </div> -->
+                </div>
+                <div id="dashboard" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"></div>
+            </div>
+            <div class="page-row row">
+                <footer class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 footer blue pt-4 mt-4">    
+                    <div class="container">
+                        <div class="footer-copyright text-center text-muted py-3">2018 Designed By:
+                            <a href="http://www.dtu.dk/english/service/phonebook/person?id=131027&tab=3&qt=dtuprojectquery">Eleftherios Kyriakakis</a>,
+                            <a href="http://www.dtu.dk/english/service/phonebook/person?id=121171&cpid=225351&tab=0">Michele De Donno</a>,
+                            <a href="http://www.dtu.dk/service/telefonbog/person?id=132894&tab=3&qt=dtuprojectquery">Mohammadreza Barzegaran</a>,
+                            <a href="http://www.dtu.dk/english/service/phonebook/person?id=33631&tab=2&qt=dtupublicationquery">Tórur Biskopstø Strøm</a>
+                        </div>
                     </div>
-                </footer>
-                </div>
-                    <div id="dashboard" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-                </div>
+                </footer>  
             </div>
         </div>
-        
-        <!-- Footer -->      
+        <!-- Footer -->    
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
@@ -71,18 +97,65 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <!-- Latest Chart JS library -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.2/Chart.bundle.min.js"></script>
+        <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
         <!-- Now Our Code -->
         <script>
+            var currentTime = new Date($.now());
+            var currentView = 0;
+            var lastTimeLabel = "";
+            var rainChartA;
+            var rainChartB;
+            var tempChart;
+            var tempChartCount = 0;
+            var humChart;
+            var humChartCount = 0;
+            var testA = 0;
+            var testB = 0;
+            // Update rate
+            var refreshTimer = setInterval(refresh_sensorReadings, 1000);
+            // Manage Sensors
             function refresh_sensorReadings() {
-                var currentTime = $.now()/1000;
-                $(".sensA_ts").html(currentTime);
-                $(".sensB_ts").html(currentTime);
+                currentTime = new Date($.now());
+                timeLabel = currentTime.getDate() + "/"
+                            + (currentTime.getMonth()+1)  + "/" 
+                            + currentTime.getFullYear() + " @ "  
+                            + currentTime.getHours() + ":"  
+                            + currentTime.getMinutes() + ":" 
+                            + currentTime.getSeconds() + "."
+                            + currentTime.getMilliseconds();
+                testA = Math.random();
+                testB = Math.random();
+                $(".sensA_ts").html(timeLabel);
+                $(".sensB_ts").html(timeLabel);
+                refresh_chartDisplays(timeLabel);
             }
-            window.setInterval(refresh_sensorReadings, 1000);
+            //Manage Charts
+            function refresh_chartDisplays(timeLabel) {
+                if (currentView == 0){
+                    return;
+                } else if (currentView == 1){
+                    lastTimeLabel = timeLabel
+                    if(tempChartCount >= 9){
+                        tempChart.removeData(lastTimeLabel);
+                    }
+                    tempChart.addData([Math.random()*100, Math.random()*100], timeLabel);
+                    
+                    tempChartCount++;
+                    if(humChartCount >= 9){
+                        humChart.removeData(lastTimeLabel);
+                    }
+                    humChart.addData([Math.random()*100, Math.random()*100], timeLabel);
+                    humChartCount++;
+                    //Actually Update
+                    tempChart.update();
+                    humChart.update();
+                }
+            }
+            // Manage view change
             $("document").ready(function(){
                 $("#dashboard").load("overview.html");
                 $("#overviewBtn").addClass("active");
+                currentView = 0;
                 console.log("loaded overview page");
             });
             $("#overviewBtn").click(function(){
@@ -90,6 +163,7 @@
                 $("#overviewLi").addClass("active");
                 $("#analyticsLi").removeClass("active");
                 $("#reportsLi").removeClass("active");
+                currentView = 0;
                 console.log("loaded overview page");
             });
             $("#analyticsBtn").click(function(){
@@ -97,6 +171,7 @@
                 $("#overviewLi").removeClass("active");
                 $("#analyticsLi").addClass("active");
                 $("#reportsLi").removeClass("active");
+                currentView = 1;
                 console.log("loaded analytics page");
             });
             $("#reportsBtn").click(function(){
@@ -104,7 +179,18 @@
                 $("#overviewLi").removeClass("active");
                 $("#analyticsLi").removeClass("active");
                 $("#reportsLi").addClass("active");
+                currentView = 2;
                 console.log("loaded reports page");
+            });
+            // Manage Settings
+            $("#refreshRate").keyup(function(){
+                clearInterval(refreshTimer);
+                var refreshRate = parseInt($("#refreshRate").val(), 10);
+                if(refreshRate == NaN || refreshRate < 500){
+                    refreshRate == 1000;
+                }
+                refreshTimer = setInterval(refresh_sensorReadings, refreshRate);
+                console.log("refresh rate update to " + refreshRate + " ms");
             });
         </script>
     </body>
