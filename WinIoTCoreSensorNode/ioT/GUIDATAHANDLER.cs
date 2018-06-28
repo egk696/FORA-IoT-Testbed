@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -61,30 +62,32 @@ namespace ioT
         }
         public void addDATASETtoLightSensor(DateTime time, float value)
         {
-            vis.lightsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
+            vis.lightsen._Enqueue(value, max_vals);
         }
         public void addDATASETtomicrophoneSensor(DateTime time, float value)
         {
-            vis.microsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
+            vis.microsen._Enqueue(value, max_vals);
         }
         public void addDATASETtoThermalSensor(DateTime time, float value)
         {
-            vis.thermalsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
+            vis.thermalsen._Enqueue(value, max_vals);
         }
         public void addDATASETtoHumidSensor(DateTime time, float value)
         {
-            vis.humidsen._Enqueue(new DataSet() { Timestamp = time, Amount = value }, max_vals);
+            vis.humidsen._Enqueue(value, max_vals);
         }
     }
 
     public static class Extensions
     {
-        public static void _Enqueue<T>(this ConcurrentQueue<T> queue, T val, int max = int.MaxValue)
+        public static void _Enqueue<T>(this ObservableCollection<T> queue, T val, int max = int.MaxValue)
         {
-            // Not properly threadsafe but safe enough
-            if (queue.Count >= max)
-                queue.TryDequeue(out var dummy);
-            queue.Enqueue(val);
+            lock(queue)
+            {
+                if (queue.Count >= max)
+                    queue.RemoveAt(0);
+                queue.Add(val);
+            }
         }
     }
 }
