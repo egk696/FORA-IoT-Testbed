@@ -48,7 +48,6 @@ namespace ioT
 
         volatile int max_sensor_val = 0;
         volatile int min_sensor_val = 0;
-        volatile string cloud_uri = "http://192.168.234.40:82/";
 
         //Sample Entries
         public List<string> lightrate_sample = new List<string>();
@@ -211,7 +210,7 @@ namespace ioT
             var timestamp = DateTime.Now;
             handler.addDATASETtoLightSensor(timestamp, sensorvalue);
 
-            SendToCloud(new { sensorid = vis.senname.Text, lightvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
+            SendToCloud(new { nodeid = vis.senname.Text, lightvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
         }
         
         private void SoundSensorRead(object sender, object e)
@@ -223,7 +222,7 @@ namespace ioT
             }
             var timestamp = DateTime.Now;
             handler.addDATASETtomicrophoneSensor(timestamp, sensorvalue);
-            SendToCloud(new { sensorid = vis.senname.Text, soundvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
+            SendToCloud(new { nodeid = vis.senname.Text, soundvals = new[] { new { timestamp = timestamp, val = sensorvalue } } });
         }
 
         private void THSensorRead(object sender, object e)
@@ -243,7 +242,7 @@ namespace ioT
             handler.addDATASETtoThermalSensor(timestamp, sensortemp);
             handler.addDATASETtoHumidSensor(timestamp, sensorhum);
 
-            SendToCloud(new { sensorid = vis.senname.Text,
+            SendToCloud(new { nodeid = vis.senname.Text,
                 tempvals = new[] { new { timestamp = timestamp, val = sensortemp } },
                 humidvals = new[] { new { timestamp = timestamp, val = sensorhum } }
             });
@@ -321,8 +320,7 @@ namespace ioT
 
         private void SendToCloud<T>(T val)
         {
-            var uri = new Uri(cloud_uri);
-            //var uri = new Uri(getURI());
+            var uri = new Uri(uri_box.Text);
             var json = JsonConvert.SerializeObject(val);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             // Fire and forget
@@ -333,6 +331,7 @@ namespace ioT
                     vis.setLogger(resp.ToString());
             });
         }
+
         public void setDefault()
         {
             _timer_1.Interval = new TimeSpan(0, 0, 0, 1, 0);
@@ -344,10 +343,6 @@ namespace ioT
             _timer_1.Start();
             _timer_2.Start();
             _timer_3.Start();
-        }
-        public string getURI()
-        {
-            return uri_box.Text;
         }
     }
 }
