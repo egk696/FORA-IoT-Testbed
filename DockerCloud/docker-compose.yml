@@ -20,9 +20,9 @@ services:
     restart: on-failure
 
   website:
-    image: php:apache
+    build: ./website
     volumes:
-      - ./website:/var/www/html
+      - ./website:/usr/src/app
     ports:
       - 80:80
     depends_on:

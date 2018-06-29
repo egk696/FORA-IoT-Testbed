@@ -190,6 +190,11 @@ class myRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
+    
+    # with access-control-allow-origin (see https://stackoverflow.com/questions/21956683/enable-access-control-on-simple-http-server)    
+    def end_headers (self):
+        self.send_header('Access-Control-Allow-Origin', '*')
+        SimpleHTTPRequestHandler.end_headers(self)
 
 if __name__== '__main__':
     httpserver_class = HTTPServer
