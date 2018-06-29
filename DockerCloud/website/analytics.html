@@ -26,7 +26,10 @@
 
     <body>
         <h2 class="sub-header">Live Temperature Graph</h2>
-        <canvas id="tempChart" width="1440" height="320"></canvas>
+        <div class="chart-container">
+            <canvas id="tempChart" width="1440" height="320"></canvas>
+            <div id="tempLegend"></div>
+        </div>
         <h2 class="sub-header">Live Humidity Graph</h2>
         <canvas id="humChart" width="1440" height="320"></canvas>
         <!-- Bootstrap core JavaScript
@@ -47,7 +50,7 @@
                     fontColor: "rgba(24,24,24,1)",
                     }
                 },
-                animation: false,
+                animation: true,
                 scaleOverride : true,
                     scaleSteps : 20,
                     scaleStepWidth : 5,

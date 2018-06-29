@@ -32,11 +32,11 @@
 
         <div class="row placeholders">
             <div class="col-xs-6 col-sm-3 placeholder">
-                <h4>Node.A Rain Probability</h4>
+                <h4>Node.A</h4>
                 <canvas id="rainChartA" width="400" height="320"></canvas>
             </div>
             <div class="col-xs-6 col-sm-3 placeholder">
-                <h4>Node.B Rain Probability</h4>
+                <h4>Node.B</h4>
                 <canvas id="rainChartB" width="400" height="320"></canvas>
             </div>
         </div>
@@ -106,7 +106,7 @@
                     fontColor: "rgba(24,24,24,1)",
                     }
                 },
-                animation: true,
+                animation: false,
                 scaleOverride : true,
                     scaleSteps : 20,
                     scaleStepWidth : 5,
@@ -114,24 +114,24 @@
             };
             var ctx = document.getElementById("rainChartA").getContext("2d");
             var data = {
-                labels: ["Probability (%)"],
+                labels: ["Rain Probability (%)"],
                 datasets: [{
                     label: "Node A",
                     fillColor: "rgba(151,187,220,0.5)",
                     strokeColor: "rgba(151,187,220,1)",
-                    data: [47]
+                    data: [99.99]
                 }]
             };
             rainChartA = new Chart(ctx).Bar(data, options);
             rainChartACount = 0;
             var ctx = document.getElementById("rainChartB").getContext("2d");
             var data = {
-                labels: ["Probability (%)"],
+                labels: ["Rain Probability (%)"],
                 datasets: [{
                     label: "Node B",
                     fillColor: "rgba(151,187,220,0.5)",
                     strokeColor: "rgba(151,187,220,1)",
-                    data: [50]
+                    data: [99.99]
                 }]
             };
             rainChartB = new Chart(ctx).Bar(data, options);

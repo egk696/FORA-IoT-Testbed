@@ -100,6 +100,7 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
         <!-- Now Our Code -->
         <script>
+            var apiURL = "http://localhost:8081/"//"mockup_sensor_values.json";
             var currentTime = new Date($.now());
             var currentView = 0;
             var lastTimeLabel = "";
@@ -109,12 +110,19 @@
             var tempChartCount = 0;
             var humChart;
             var humChartCount = 0;
-            var testA = 0;
-            var testB = 0;
+            var nodeALog = "";
+            var nodeBLog = "";
             // Update rate
-            var refreshTimer = setInterval(refresh_sensorReadings, 1000);
+            var refreshTimer = setInterval(retrieveSensorReadings, 1000);
+            // Requests
+            function retrieveSensorReadings() {
+                $.getJSON(apiURL, function(data) {
+                    // console.log(data);
+                    refreshSensorReading(data);
+                });
+            }
             // Manage Sensors
-            function refresh_sensorReadings() {
+            function refreshSensorReading(json_obj){
                 currentTime = new Date($.now());
                 timeLabel = currentTime.getDate() + "/"
                             + (currentTime.getMonth()+1)  + "/" 
@@ -123,32 +131,92 @@
                             + currentTime.getMinutes() + ":" 
                             + currentTime.getSeconds() + "."
                             + currentTime.getMilliseconds();
-                testA = Math.random();
-                testB = Math.random();
-                $(".sensA_ts").html(timeLabel);
-                $(".sensB_ts").html(timeLabel);
-                refresh_chartDisplays(timeLabel);
-            }
-            //Manage Charts
-            function refresh_chartDisplays(timeLabel) {
                 if (currentView == 0){
-                    return;
+                    // Node A
+                    try{
+                        $(".sensA_ts").html(timeLabel);
+                    } catch(err){
+                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:timestamp" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensA_temp").html(json_obj[0].tempvals[json_obj[0].tempvals.length-1].val);
+                    } catch(err){
+                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:tempvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensA_hum").html(json_obj[0].humidvals[json_obj[0].humidvals.length-1].val);
+                    } catch(err){
+                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:humidvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensA_sound").html(json_obj[0].soundvals[json_obj[0].soundvals.length-1].val);
+                    } catch(err){
+                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:soundvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensA_light").html(json_obj[0].lightvals[json_obj[0].lightvals.length-1].val);
+                    } catch(err){
+                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:lightvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        rainChartA.removeData("Rain Probability (%)");
+                        rainChartA.addData([json_obj[0].rainprob], "Rain Probability (%)");
+                        rainChartA.update();
+                    } catch(err){
+                        nodeALog += "\n" + "WARN: at time: " + timeLabel + " for obj:rainprob" + " with Error: " + err.message;
+                    }
+                    // Node B
+                    try{
+                        $(".sensB_ts").html(timeLabel);
+                    } catch(err){
+                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:timestamp" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensB_temp").html(json_obj[1].tempvals[json_obj[1].tempvals.length-1].val);
+                    } catch(err){
+                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:tempvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensB_hum").html(json_obj[1].humidvals[json_obj[1].humidvals.length-1].val);
+                    } catch(err){
+                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:humidvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensB_sound").html(json_obj[1].soundvals[json_obj[1].soundvals.length-1].val);
+                    } catch(err){
+                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:soundvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        $(".sensB_light").html(json_obj[1].lightvals[json_obj[1].lightvals.length-1].val);
+                    } catch(err){
+                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:lightvals" + " with Error: " + err.message;
+                    }
+                    try{
+                        rainChartB.removeData("Rain Probability (%)");
+                        rainChartB.addData([json_obj[1].rainprob], "Rain Probability (%)");
+                        rainChartB.update();
+                    } catch(err){
+                        nodeBLog += "\n" + "WARN: at time: " + timeLabel + " for obj:rainprob" + " with Error: " + err.message;
+                    }
                 } else if (currentView == 1){
                     lastTimeLabel = timeLabel
                     if(tempChartCount >= 9){
                         tempChart.removeData(lastTimeLabel);
                     }
-                    tempChart.addData([Math.random()*100, Math.random()*100], timeLabel);
+                    tempChart.addData([json_obj[0].tempvals[json_obj[0].tempvals.length-1].val, json_obj[1].tempvals[json_obj[0].tempvals.length-1].val], timeLabel);
                     
                     tempChartCount++;
                     if(humChartCount >= 9){
                         humChart.removeData(lastTimeLabel);
                     }
-                    humChart.addData([Math.random()*100, Math.random()*100], timeLabel);
+                    humChart.addData([json_obj[0].humidvals[json_obj[0].humidvals.length-1].val, json_obj[1].humidvals[json_obj[0].humidvals.length-1].val], timeLabel);
                     humChartCount++;
                     //Actually Update
                     tempChart.update();
                     humChart.update();
+                } else if(currentView == 2){
+                    $("#logNodeA").html(nodeALog);
+                    $("#logNodeB").html(nodeBLog);
                 }
             }
             // Manage view change
@@ -189,7 +257,7 @@
                 if(refreshRate == NaN || refreshRate < 500){
                     refreshRate == 1000;
                 }
-                refreshTimer = setInterval(refresh_sensorReadings, refreshRate);
+                refreshTimer = setInterval(retrieveSensorReadings, refreshRate);
                 console.log("refresh rate update to " + refreshRate + " ms");
             });
         </script>
