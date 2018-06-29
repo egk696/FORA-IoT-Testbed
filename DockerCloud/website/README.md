@@ -11,3 +11,5 @@ Visualizes probability of rain, latest sensor data and provides report logging.
          $ python webservice.py 8080
 
 2) Navigate to http://localhost:8080/
+
+3) Change 'API url' field to 'mockup_sensor_values.json'
