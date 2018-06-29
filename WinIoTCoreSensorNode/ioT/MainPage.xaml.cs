@@ -322,6 +322,7 @@ namespace ioT
         private void SendToCloud<T>(T val)
         {
             var uri = new Uri(cloud_uri);
+            //var uri = new Uri(getURI());
             var json = JsonConvert.SerializeObject(val);
             var stringContent = new StringContent(json, Encoding.UTF8, "application/json");
             // Fire and forget
@@ -343,6 +344,10 @@ namespace ioT
             _timer_1.Start();
             _timer_2.Start();
             _timer_3.Start();
+        }
+        public string getURI()
+        {
+            return uri_box.Text;
         }
     }
 }

@@ -10,6 +10,28 @@
     mc:Ignorable="d" Loaded="Page_Loaded">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+
+
+        <Grid x:Name="page1" HorizontalAlignment="Stretch" Height="900" VerticalAlignment="Top" Width="1680" d:IsLocked="True">
+            <telerikChart:RadCartesianChart x:Name="radChart" Width="1400" Height="700">
+                <telerikChart:RadCartesianChart.HorizontalAxis>
+                    <telerikChart:CategoricalAxis/>
+                </telerikChart:RadCartesianChart.HorizontalAxis>
+                <telerikChart:RadCartesianChart.VerticalAxis>
+                    <telerikChart:LinearAxis/>
+                </telerikChart:RadCartesianChart.VerticalAxis>
+                <telerikChart:LineSeries ItemsSource="{Binding}"/>
+            </telerikChart:RadCartesianChart>
+            <Button x:Name="lightsen" Content="Light Sensor" HorizontalAlignment="Left" Margin="300,50,0,0" VerticalAlignment="Top" FontSize="20" Click="lightsen_Click"/>
+            <Button x:Name="microsen" Content="Microphone" HorizontalAlignment="Left" Margin="600,50,0,0" VerticalAlignment="Top" FontSize="20" Click="microsen_Click"/>
+            <Button x:Name="thermalsen" Content="Thermal Sensor" HorizontalAlignment="Right" Margin="530,50,600,0" VerticalAlignment="Top" FontSize="20" Click="thermalsen_Click"/>
+            <Button x:Name="humidsen" Content="Humidity Sensor" HorizontalAlignment="Right" Margin="698,50,300,0" VerticalAlignment="Top" FontSize="20" Click="humidsen_Click"/>
+            <Button x:Name="stopshow" Content="STOP" HorizontalAlignment="Left" Margin="120,50,0,0" VerticalAlignment="Top" Width="108" Click="stopshow_Click" Height="39"/>
+        </Grid>
+
+
+
         <Button x:Name="forwardBut" Content="NEXT" HorizontalAlignment="Right" VerticalAlignment="Stretch" FontWeight="Bold" FontSize="36" Height="1080" Width="120" FontFamily="Segoe UI" Background="#33F50F0F" Click="forwardBut_Click" d:IsLocked="True"/>
         <Button x:Name="backwardBut" Content="BACK" HorizontalAlignment="Left" Margin="0,0,1790,0" VerticalAlignment="Stretch" FontWeight="Bold" FontSize="36" Height="1080" Width="120" Background="#33FF0F0D" Click="backwardBut_Click" d:IsLocked="True"/>
         <Grid x:Name="page0" HorizontalAlignment="Stretch" Height="900" VerticalAlignment="Top" Width="1680" d:IsLocked="True" d:IsHidden="True">
@@ -18,8 +40,8 @@
             <TextBlock x:Name="usernamelabel" HorizontalAlignment="Left" Margin="170,130,0,0" Text="Username" TextWrapping="Wrap" VerticalAlignment="Top" FontSize="30" FontFamily="Segoe UI"/>
             <TextBlock x:Name="passwordlabel" HorizontalAlignment="Left" Margin="170,215,0,0" Text="Password" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30"/>
             <TextBlock HorizontalAlignment="Left" Margin="170,300,0,0" Text="Sensorname" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30"/>
-            <TextBox x:Name="usernamebox" HorizontalAlignment="Left" Margin="350,130,0,0" Text="iot.fora.ts1" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30" Height="52" Width="400"/>
-            <TextBox x:Name="senbox" HorizontalAlignment="Left" Margin="350,300,0,0" Text="sensor1" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="36"/>
+            <TextBox x:Name="usernamebox" HorizontalAlignment="Left" Margin="350,130,0,0" Text="iot.fora.ts1" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="25" Height="52" Width="400"/>
+            <TextBox x:Name="senbox" HorizontalAlignment="Left" Margin="350,300,0,0" Text="sensor1" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="25"/>
             <Image x:Name="conimage" HorizontalAlignment="Left" Height="256" Margin="1181,110,0,0" VerticalAlignment="Top" Width="256" Stretch="Fill" Source="Assets/disconnected.png"/>
             <Button x:Name="fortostage2" Content="" HorizontalAlignment="Left" Margin="1542,396,0,0" VerticalAlignment="Top" Height="128" Width="128" Click="fortostage2_Click">
                 <Button.Foreground>
@@ -74,26 +96,12 @@
             </Button>
             <TextBlock HorizontalAlignment="Left" Margin="760,130,0,0" Text="@gmail.com" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30"/>
             <TextBlock x:Name="calmes" HorizontalAlignment="Stretch" Margin="0,825,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30" Width="790" Height="45"/>
+            <TextBox x:Name="uri_box" HorizontalAlignment="Left" Margin="703,300,0,0" Text="http://192.168.234.40:82/" VerticalAlignment="Top" Width="400" Height="52" FontSize="25"/>
+            <TextBlock x:Name="passwordlabel_Copy" HorizontalAlignment="Left" Margin="626,308,0,0" Text="URI" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30"/>
 
         </Grid>
-        <TextBox x:Name="logbox" HorizontalAlignment="Stretch" Margin="0,920,0,0" Text="" VerticalAlignment="Bottom" Width="1680" Height="180" AcceptsReturn="True"/>
-        <Grid x:Name="page1" HorizontalAlignment="Stretch" Height="900" VerticalAlignment="Top" Width="1680">
-            <telerikChart:RadCartesianChart x:Name="radChart" Width="1400" Height="700">
-                <telerikChart:RadCartesianChart.HorizontalAxis>
-                    <telerikChart:CategoricalAxis/>
-                </telerikChart:RadCartesianChart.HorizontalAxis>
-                <telerikChart:RadCartesianChart.VerticalAxis>
-                    <telerikChart:LinearAxis/>
-                </telerikChart:RadCartesianChart.VerticalAxis>
-                <telerikChart:LineSeries ItemsSource="{Binding}"/>
-            </telerikChart:RadCartesianChart>
-            <Button x:Name="lightsen" Content="Light Sensor" HorizontalAlignment="Left" Margin="300,50,0,0" VerticalAlignment="Top" FontSize="20" Click="lightsen_Click"/>
-            <Button x:Name="microsen" Content="Microphone" HorizontalAlignment="Left" Margin="600,50,0,0" VerticalAlignment="Top" FontSize="20" Click="microsen_Click"/>
-            <Button x:Name="thermalsen" Content="Thermal Sensor" HorizontalAlignment="Right" Margin="530,50,600,0" VerticalAlignment="Top" FontSize="20" Click="thermalsen_Click"/>
-            <Button x:Name="humidsen" Content="Humidity Sensor" HorizontalAlignment="Right" Margin="698,50,300,0" VerticalAlignment="Top" FontSize="20" Click="humidsen_Click"/>
-            <Button x:Name="stopshow" Content="STOP" HorizontalAlignment="Left" Margin="120,50,0,0" VerticalAlignment="Top" Width="108" Click="stopshow_Click" Height="39"/>
-        </Grid>
-        
+        <TextBox x:Name="logbox" HorizontalAlignment="Stretch" Margin="0,920,0,0" Text="" VerticalAlignment="Bottom" Width="1680" Height="180" AcceptsReturn="True" d:IsLocked="True"/>
+
 
 
     </Grid>
