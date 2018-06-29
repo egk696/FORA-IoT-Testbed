@@ -10,9 +10,10 @@ import time
 import datetime
 import json
 import numpy
+import dateutil.parser
 
 HOSTNAME='0.0.0.0'
-PORT_NUMBER = 8081
+PORT_NUMBER = 80
 json_buffer = ''
 test_string ='[{"nodeid":"Node1","tempvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"humidvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}]},{"nodeid":"Node2","tempvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"humidvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"soundvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156}, {"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"lightvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156}, {"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}]}]'
 
@@ -24,9 +25,9 @@ def getBuffer():
     return json_buffer
 
 def datetimeToMicroseconds(timestamp_string):
-    datetime_val = datetime.datetime.strptime(timestamp_string, "%Y-%m-%dT%H:%M:%S.%fZ")
-    epoch = datetime.datetime.utcfromtimestamp(0)
-    return (datetime_val-epoch).total_seconds()*1000.0 #float
+#    datetime_val = datetime.datetime.strptime(timestamp_string, "%Y-%m-%dT%H:%M:%S.%fZ")
+    datetime_val = dateutil.parser.parse(timestamp_string)
+    return datetime_val.timestamp()
 
 def newData():
     return_string = ''
@@ -34,21 +35,22 @@ def newData():
     # rainprobs = [0.0, 0.0]
 
     # Retrieve json string from data_integration module
-    # remote_hostname = '127.0.0.1'
-    # remote_portnumber = 8082
-    # connection = http.client.HTTPConnection(remote_hostname, remote_portnumber)
-    # connection.request('GET', '/')
-    # response = connection.getresponse()
+    remote_hostname = 'data-integration'
+    remote_portnumber = 80
+    connection = http.client.HTTPConnection(remote_hostname, remote_portnumber)
+    connection.request('GET', '/')
+    response = connection.getresponse()
 
     # if it is not possible to get data return an empty string
-    # if response.status != 200:
-    #     return return_string
-    #
-    # json_string = response.read()
+    print(response.status)
+    if response.status != 200:
+        return return_string
+    
+    json_string = response.read()
 
     # Extract values from the json string
-    rcv_vals = json.loads(test_string)
-    # rcv_vals = json.loads(json_string)
+    # rcv_vals = json.loads(test_string)
+    rcv_vals = json.loads(json_string)
     
     print('Received values are listed below.')
     for node in rcv_vals:

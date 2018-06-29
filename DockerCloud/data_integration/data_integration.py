@@ -22,7 +22,7 @@ class S(BaseHTTPRequestHandler):
 				for key, value in set.items():
 					if type(value) is deque:
 						set[key] = list(value)
-			post_body = json.dumps(_sets)
+			post_body = json.dumps(list(_sets.values()))
 			self.send_response(200)
 			self.send_header('Content-type', 'application/json')
 			self.end_headers()
