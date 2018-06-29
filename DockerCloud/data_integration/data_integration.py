@@ -1,33 +1,61 @@
 # Data Integration Service
-
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import json
+import threading
 from collections import deque
-import time
-
-queue = deque('',1000)
 
 class S(BaseHTTPRequestHandler):		
 
+	lock = threading.Lock()
+	sets = {}
+
 	def do_GET(self):
-		try:
-			val = queue.popleft()
-			post_body = json.dumps(val)
+		with S.lock:
+			_sets = S.sets
+			S.sets = {}
+		
+		if not _sets:
+			self.send_response(204)
+			self.end_headers()
+		else:
+			for set in _sets.values():
+				for key, value in set.items():
+					if type(value) is deque:
+						set[key] = list(value)
+			post_body = json.dumps(_sets)
 			self.send_response(200)
 			self.send_header('Content-type', 'application/json')
 			self.end_headers()
 			self.wfile.write(bytes(post_body, 'utf-8'))
-		except IndexError:
-			self.send_response(204)
-			self.end_headers()
 
 	def do_POST(self):
-		content_len = int(self.headers['content-length'])
-		post_body = self.rfile.read(content_len)
-		val = json.loads(post_body)
-		queue.append(val)
-		self.send_response(200)
-		self.end_headers()
+		try:
+			content_len = int(self.headers['content-length'])
+			post_body = self.rfile.read(content_len)
+			val = json.loads(post_body)
+			nodeid = val['nodeid']
+			
+			with S.lock:
+				try:
+					set = S.sets[nodeid]
+				except KeyError:
+					set = {}
+					S.sets[nodeid] = set
+				
+				for key, value in val.items():
+					if type(value) is list:
+						if key not in set:
+							set[key] = deque('',1000)
+						set[key].extend(value)
+					else:
+						set[key] = value
+			
+			self.send_response(200)
+			self.end_headers()
+		except:
+			self.send_response(500)
+			self.end_headers()
+			raise
 
 	def do_HEAD(self):
 		self.send_response(200)
