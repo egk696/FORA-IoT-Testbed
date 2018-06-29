@@ -12,7 +12,8 @@
 2) Install docker-compose (https://docs.docker.com/compose/).<br />
    The code has been tested with: "docker-compose version 1.21.2"
    
-3) Run the following command: <br />
+3) Run the following commands: <br />
+         $ sudo docker-compose build <br />
          $ sudo docker-compose up <br />
     Note: make sure to run the command in the directory "IoT-Cloud-Testbed/DockerCloud/" 
     
