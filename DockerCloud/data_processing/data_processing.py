@@ -2,15 +2,19 @@
 # -*- coding: utf-8 -*-
 
 #  ---------- Data Integration Service ----------
-import BaseHTTPServer
+# import BaseHTTPServer
+from http.server import BaseHTTPRequestHandler, HTTPServer
+# import httplib
+import http.client
 import time
+import datetime
 import json
 import numpy
 
 HOSTNAME='0.0.0.0'
 PORT_NUMBER = 8081
 json_buffer = ''
-test_string ='[{"nodeid":"Node1","tempvals":[{"timestamp":"2018-06-28T10:44:00.000000","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000","val":157.157}],"humidvals":[{"timestamp":"2018-06-28T10:44:00.000000","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000","val":157.157}]},{"nodeid":"Node2","tempvals":[{"timestamp":"2018-06-28T10:44:00.000000","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000","val":157.157}],"humidvals":[{"timestamp":"2018-06-28T10:44:00.000000","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000","val":157.157}],"soundvals":[{"timestamp":"2018-06-28T10:44:00.000000","val":156.156}, {"timestamp":"2018-06-28T10:44:01.000000","val":157.157}],"lightvals":[{"timestamp":"2018-06-28T10:44:00.000000","val":156.156}, {"timestamp":"2018-06-28T10:44:01.000000","val":157.157}]}]'
+test_string ='[{"nodeid":"Node1","tempvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"humidvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}]},{"nodeid":"Node2","tempvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"humidvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156},{"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"soundvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156}, {"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}],"lightvals":[{"timestamp":"2018-06-28T10:44:00.000000Z","val":156.156}, {"timestamp":"2018-06-28T10:44:01.000000Z","val":157.157}]}]'
 
 def setBuffer(value):
     global json_buffer
@@ -19,14 +23,34 @@ def setBuffer(value):
 def getBuffer():
     return json_buffer
 
+def datetimeToMicroseconds(timestamp_string):
+    datetime_val = datetime.datetime.strptime(timestamp_string, "%Y-%m-%dT%H:%M:%S.%fZ")
+    epoch = datetime.datetime.utcfromtimestamp(0)
+    return (datetime_val-epoch).total_seconds()*1000.0 #float
+
 def newData():
     return_string = ''
     rainprobs = numpy.zeros(2)
+    # rainprobs = [0.0, 0.0]
+
     # Retrieve json string from data_integration module
-    pass
+    # remote_hostname = '127.0.0.1'
+    # remote_portnumber = 8082
+    # connection = http.client.HTTPConnection(remote_hostname, remote_portnumber)
+    # connection.request('GET', '/')
+    # response = connection.getresponse()
+
+    # if it is not possible to get data return an empty string
+    # if response.status != 200:
+    #     return return_string
+    #
+    # json_string = response.read()
+
     # Extract values from the json string
     rcv_vals = json.loads(test_string)
-
+    # rcv_vals = json.loads(json_string)
+    
+    print('Received values are listed below.')
     for node in rcv_vals:
         print(node['nodeid']+':')
         try:
@@ -48,14 +72,30 @@ def newData():
         except KeyError:
             print('no light vals')
         try:
-            for soundval in node ['soundvals']:
-                print(soundval['timestamp'])
-                print(soundval['val'])
+            soundintensities = []
+            soundtimes = [] # array timestamps converted in microseconds
+            for soundsample in node ['soundvals']:
+                print(soundsample['timestamp'])
+                print(soundsample['val'])
+                soundintensities.append(soundsample['val'])
+                time_usecs = datetimeToMicroseconds(soundsample['timestamp'])
+                soundtimes.append(time_usecs)
         except KeyError:
             print('no sound vals')
+        else:
+            # Process sound values
+            soundintensities = numpy.asarray(soundintensities) # float64 array
+            soundtimes = numpy.asarray(soundtimes) # float64 array
 
-    # Process sound values
-    pass
+            # print(soundintensities)
+            # print(soundintensities.dtype)
+            # print(soundtimes)
+            # print(soundtimes.dtype)
+            # frequencies = numpy.fft.fft2(array_soundvals)
+            # frequencies = numpy.absolute(frequencies)
+            # print(frequencies)
+
+
     # Compare values with the thresholds
     pass
     # Compute probabilities of rain
@@ -68,10 +108,12 @@ def newData():
 
     return return_string;
 
-class myRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
+class myRequestHandler(BaseHTTPRequestHandler):
     # process GET request
     def do_GET(self):
         try:
+            if getBuffer() == '':
+                raise ValueError('No data available')
             # Send response status code
             self.send_response(200)
 
@@ -86,25 +128,26 @@ class myRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             # self.wfile.write('<br></body></html>')
 
             # Send json string contained in the buffer
-            self.wfile.write(bytes(getBuffer()).encode('utf-8'))
+            self.wfile.write(bytes(getBuffer(),'utf-8'))
 
             # Empty the json_buffer string
             setBuffer('')
 
             # Refill the buffer
-            # setBuffer(newData())
+            setBuffer(newData())
         except Exception as e:
             self.send_response(204)
             self.end_headers()
-            self.wfile.write('Exception: "' + str(e) + '"')
+            self.wfile.write(bytes('Exception: "' + str(e) + '"','utf-8'))
 
+    # process HEAD request
     def do_HEAD(self):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self.end_headers()
 
 if __name__== '__main__':
-    httpserver_class = BaseHTTPServer.HTTPServer
+    httpserver_class = HTTPServer
     myServer = httpserver_class((HOSTNAME,PORT_NUMBER), myRequestHandler)
 
     # Initialize the buffer
