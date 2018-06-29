@@ -139,13 +139,12 @@ def newData():
             sound_freq = number_up_val/time_interval
             # print(str(number_up_val)+'/'+str(time_interval)+'='+str(frequency))
 
+        # Compute probabilities of rain
         prob_rain = COEFF_SOUND*sound_freq + COEFF_HUMID*humid_avg + COEFF_TEMP*(1/temp_avg)
+        # Store the percentage of rain for the current node
         rainpercs[i] = prob_rain * 100 / MAX_PROBAB
         i = i+1
-    # Compare values with the thresholds
-    # pass
-    # Compute probabilities of rain
-    # pass
+
     # Create the new object with the probabilities of rain
     for node, rainperc in zip(rcv_vals, rainpercs):
         node['rainprob'] = rainperc
