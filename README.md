@@ -1,5 +1,5 @@
 # FORA SC3 - Sensor Data Integration
-This repository contains our FORA SC3 project. The project consists of a cloud part, located in [DockerCloud](tree/master/DockerCloud) and a sensor node part, located in [RaspbianSensorNode](tree/master/RaspbianSensorNode) and [WinIoTCoreSensorNode](tree/master/WinIoTCoreSensorNode). 
+This repository contains our FORA SC3 project. The project consists of a cloud part, located in [DockerCloud](DockerCloud) and a sensor node part, located in [RaspbianSensorNode](RaspbianSensorNode) and [WinIoTCoreSensorNode](WinIoTCoreSensorNode). 
 
 The sensor nodes measure values using connected sensors and transmit these values to the cloud, where data from all nodes are collected, processed and visualized.
 
