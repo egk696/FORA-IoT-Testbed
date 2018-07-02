@@ -63,12 +63,12 @@
                             </div>
                         </li>
                         <li><br/></li>
-                        <li>
+                        <!--<li>
                             <div class="form-group">
                                 <label style="padding-left: 20px; padding-right: 20px;color:#428bca;" for="refreshRate">API url:</label>
-                                <input class="form-control" id="APIURL" style="padding-left: 20px; padding-right: 20px;" style="width: 20%" type="text" name="refreshRate" placeholder="i.e. http://localhost:8081/" value="http://localhost:81/"/>
+                                <input class="form-control" id="APIURL" style="padding-left: 20px; padding-right: 20px;" style="width: 20%" type="text" name="refreshRate" placeholder="i.e. http://data-processing:80/" value="http://data-processing:80/"/>
                             </div>
-                        </li>
+                        </li>-->
                         <li>
                             <div class="form-group">
                                 <label style="padding-left: 20px; padding-right: 20px;color:#428bca;" for="refreshRate">Refresh Rate (ms):</label>
@@ -106,7 +106,7 @@
         <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
         <!-- Now Our Code -->
         <script>
-            var apiURL = "http://localhost:81/"//"mockup_sensor_values.json";
+            var apiURL = window.location.protocol + "//" + window.location.hostname + ":81" //"mockup_sensor_values.json";
             var currentTime = new Date($.now());
             var currentView = 0;
             var lastTimeLabel = "";
@@ -263,9 +263,9 @@
                 console.log("loaded reports page");
             });
             // Manage Settings
-            $("#APIURL").keyup(function(){
-                apiURL = $("#APIURL").val();
-            });
+            //$("#APIURL").keyup(function(){
+            //    apiURL = $("#APIURL").val();
+            //});
             $("#refreshRate").keyup(function(){
                 clearInterval(refreshTimer);
                 var refreshRate = parseInt($("#refreshRate").val(), 10);
