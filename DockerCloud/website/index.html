@@ -122,9 +122,13 @@
             var refreshTimer = setInterval(retrieveSensorReadings, 1000);
             // Requests
             function retrieveSensorReadings() {
-                $.getJSON(apiURL, function(data) {
-                    // console.log(data);
-                    refreshSensorReading(data);
+                $.ajax({
+                    url:apiURL,
+                    dataType: "json", 
+                    success:function(data) {
+                        console.log("success retrieveSensorReadings");
+                        refreshSensorReading(data);
+                    }
                 });
             }
             // Manage Sensors
