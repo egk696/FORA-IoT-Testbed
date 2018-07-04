@@ -54,6 +54,7 @@ def newData():
 
     # if it is not possible to get data return an empty string
     if response.status != 200:
+        print("data_integration replied:", response.status)
         return return_string
 
     json_string = response.read()

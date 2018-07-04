@@ -110,6 +110,10 @@
             var currentTime = new Date($.now());
             var currentView = 0;
             var lastTimeLabel = "";
+            var lastTempvalA = 0.0;
+            var lastTempvalB = 0.0;
+            var lastHumidvalA = 0.0;
+            var lastHumidvalB = 0.0;
             var rainChartA;
             var rainChartB;
             var tempChart;
@@ -126,7 +130,7 @@
                     url:apiURL,
                     dataType: "json", 
                     success:function(data) {
-                        console.log("success retrieveSensorReadings");
+                        console.log("success retrieveSensorReadings, reply\n" + data);
                         refreshSensorReading(data);
                     }
                 });
@@ -211,25 +215,45 @@
                 } else if (currentView == 1){
                     lastTimeLabel = timeLabel
                     try{
-                        if(tempChartCount >= 9){
-                            tempChart.removeData(lastTimeLabel);
+                        lastTempvalA = parseFloat(json_obj[0].tempvals[json_obj[0].tempvals.length-1].val);
+                    } catch (err) {
+                        if(lastTempvalA==null || lastTempvalA == NaN){
+                            lastTempvalA = 0.0;
                         }
-                        tempChart.addData([json_obj[0].tempvals[json_obj[0].tempvals.length-1].val, json_obj[1].tempvals[json_obj[0].tempvals.length-1].val], timeLabel);
-                        tempChart.update();
-                        tempChartCount++;
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at time: " + timeLabel + " for obj:tempvals" + " with Error: " + err.message;
                     }
                     try{
-                        if(humChartCount >= 9){
-                            humChart.removeData(lastTimeLabel);
+                        lastTempvalB = parseFloat(json_obj[1].tempvals[json_obj[0].tempvals.length-1].val);
+                    } catch (err) {
+                        if(lastTempvalB==null || lastTempvalB == NaN){
+                            lastTempvalB = 0.0;
                         }
-                        humChart.addData([json_obj[0].humidvals[json_obj[0].humidvals.length-1].val, json_obj[1].humidvals[json_obj[0].humidvals.length-1].val], timeLabel);
-                        humChart.update();
-                        humChartCount++;
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at time: " + timeLabel + " for obj:humidvals" + " with Error: " + err.message;
                     }
+                    if(tempChartCount >= 9){
+                        tempChart.removeData(lastTimeLabel);
+                    }
+                    tempChart.addData([lastTempvalA, lastTempvalB], timeLabel);
+                    tempChart.update();
+                    tempChartCount++;
+                    try{
+                        lastHumidvalA = parseFloat(json_obj[0].humidvals[json_obj[0].humidvals.length-1].val);
+                    } catch (err) {
+                        if(lastHumidvalA==null || lastHumidvalA == NaN){
+                            lastHumidvalA = 0.0;
+                        }
+                    }
+                    try{
+                        lastHumidvalB = parseFloat(json_obj[1].humidvals[json_obj[0].humidvals.length-1].val);
+                    } catch (err) {
+                        if(lastHumidvalB==null || lastHumidvalB == NaN){
+                            lastHumidvalB = 0.0;
+                        }
+                    }
+                    if(humChartCount >= 9){
+                        humChart.removeData(lastTimeLabel);
+                    }
+                    humChart.addData([lastHumidvalA, lastHumidvalB], timeLabel);
+                    humChart.update();
+                    humChartCount++;
                 } else if(currentView == 2){
                     $("#logNodeA").html(nodeALog);
                     $("#logNodeB").html(nodeBLog);
