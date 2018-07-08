@@ -22,8 +22,10 @@ grove_vcc = 5
 
 # Settings
 nodeName = "Node2"
-logFileName = "sensor.log"
 cloudServerURL = "10.16.168.49:82"
+dhtPeriod = 2
+lightPeriod = 1
+soundPeriod = 0.001
 
 # Sharing
 pDHT = None
@@ -59,7 +61,7 @@ def processDHT(period):
     time.sleep(max(period - (datetime.datetime.now()-startT).total_seconds(), 0))
 
 # Gathers sensor values for light
-def processLight(period):
+def processLight(period, minSensorVal, maxSensorVal):
   global mutex
   lightResistance = -1
   with mutex:
@@ -69,15 +71,16 @@ def processLight(period):
     try:
       mutex.acquire()
       # Get value from light sensor
-      rawValue = max(1, grovepi.analogRead(light_sensor_port))
+      rawValue = grovepi.analogRead(light_sensor_port)
+      
       # Calculate resistance
-      lightResistance = round((float)(1023-rawValue) * 10 / rawValue,2)
+      lightPercent = (((rawValue - minSensorVal) / ((maxSensorVal - minSensorVal) * 1.0)) * 100);
     except Exception as e:
       printLog("processLight[error] %s\r\n" % (str(e)))
     finally:
       mutex.release()
     # Send
-    t = threading.Thread(target = sendToCloud, args = ("processLight", startT.isoformat(), {'nodeid' : nodeName,'lightvals' : [{ 'timestamp' : startT.isoformat(), 'val' : lightResistance }]}))
+    t = threading.Thread(target = sendToCloud, args = ("processLight", startT.isoformat(), {'nodeid' : nodeName,'lightvals' : [{ 'timestamp' : startT.isoformat(), 'val' : lightPercent }]}))
     t.start()
     time.sleep(max(period - (datetime.datetime.now()-startT).total_seconds(), 0))
 
@@ -105,30 +108,35 @@ def processSound(period):
 # Function that actually starts the threads
 def startSensorNode():
     global cloudServerURL, nodeName, stop, pDHT, pLight, pSound
+    if (len(sys.argv) > 1):
+        nodeName = sys.argv[1]
+        cloudServerURL = sys.argv[2]
+        dhtPeriod = float(sys.argv[3])
+        lightPeriod = float(sys.argv[4])
+        soundPeriod = float(sys.argv[5])
+    else:
+        print("WARN: node started with default parameters. Close and supply arguments if needed.")
+        print("Args: <nodeName> <serverURL> <dhtPeriod> <lightPeriod> <soundPeriod>")
+    # Initialize
+    printLog("SensorNode '" + nodeName + "' started... pushing to server @"+cloudServerURL)
     try:
-        nodeName = nodeTxtBox.value
-        cloudServerURL = serverTxtBox.value
-    finally:
-        # Initialize
-        printLog("SensorNode '" + nodeName + "' started... pushing to server @"+cloudServerURL)
-        try:
-            printLog("Init GrovePi")
-            # Init Pins
-            grovepi.pinMode(dht_sensor_port, "INPUT")
-            grovepi.pinMode(pot_sensor_port, "INPUT")
-            grovepi.pinMode(light_sensor_port, "INPUT")
-            grovepi.pinMode(sound_sensor_port, "INPUT")
-            # Schedule Threads
-            printLog("Scheduling Threads")
-            pDHT = threading.Thread(target = processDHT, args=[2])
-            pLight = threading.Thread(target = processLight, args=[1])
-            pSound = threading.Thread(target = processSound, args=[0.001])
-            pDHT.start()
-            pLight.start()
-            pSound.start()
-        except Exception as e:
-            printLog("startSensorNode[error]: " + str(e))
-            exit(-1)
+        printLog("Init GrovePi")
+        # Init Pins
+        grovepi.pinMode(dht_sensor_port, "INPUT")
+        grovepi.pinMode(pot_sensor_port, "INPUT")
+        grovepi.pinMode(light_sensor_port, "INPUT")
+        grovepi.pinMode(sound_sensor_port, "INPUT")
+        # Schedule Threads
+        printLog("Scheduling Threads")
+        pDHT = threading.Thread(target = processDHT, args=[dhtPeriod])
+        pLight = threading.Thread(target = processLight, args=[lightPeriod, 0, 1024])
+        pSound = threading.Thread(target = processSound, args=[soundPeriod])
+        pDHT.start()
+        pLight.start()
+        pSound.start()
+    except Exception as e:
+        printLog("startSensorNode[error]: " + str(e))
+        exit(-1)
 
 # Function that stops the threads
 def stopSensorNode():
