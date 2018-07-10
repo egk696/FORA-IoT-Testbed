@@ -8,15 +8,15 @@
         <meta name="description" content="IoT-Cloud-Testbed Dashboard">
         <meta name="author" content="Eleftherios Kyriakakis">
         <link rel="icon" href="favicon.ico">
-    
+
         <title>Dashboard for IoT-Cloud-Testbed</title>
 
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    
+
         <!-- Custom styles for this template -->
         <link href="dashboard.css" rel="stylesheet">
-    
+
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -47,7 +47,7 @@
                 </div>
             </div>
         </nav>
-        
+
         <div class="container-fluid">
             <div class="page-row row">
                 <div class="col-sm-3 col-md-2 sidebar">
@@ -71,8 +71,16 @@
                         </li>-->
                         <li>
                             <div class="form-group">
-                                <label style="padding-left: 20px; padding-right: 20px;color:#428bca;" for="refreshRate">Refresh Rate (ms):</label>
-                                <input class="form-control" id="refreshRate" style="padding-left: 20px; padding-right: 20px;" style="width: 20%" type="text" name="refreshRate" placeholder="1000" value="1000"/>
+                                <label class=".checkbox-inline" for="checkboxRate" style="padding-left: 20px; padding-right: 20px;color:#428bca;">Enable Refresh:
+                                    <input id="checkboxRate" type="checkbox" checked/>
+                                </label>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="form-group">
+                                <label style="padding-left: 20px; padding-right: 20px;color:#428bca;" for="refreshRate">Refresh Rate (ms):
+                                    <input class="form-control" id="refreshRate" type="text" name="refreshRate" placeholder="1000" value="1000"/>
+                                </label>
                             </div>
                         </li>
                     </ul>
@@ -83,7 +91,7 @@
                 <div id="dashboard" class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main"></div>
             </div>
             <div class="page-row row">
-                <footer class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 footer blue pt-4 mt-4">    
+                <footer class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 blue pt-4 mt-4">
                     <div class="container">
                         <div class="footer-copyright text-center text-muted py-3">2018 Designed By:
                             <a href="http://www.dtu.dk/english/service/phonebook/person?id=131027&tab=3&qt=dtuprojectquery">Eleftherios Kyriakakis</a>,
@@ -92,21 +100,23 @@
                             <a href="http://www.dtu.dk/english/service/phonebook/person?id=33631&tab=2&qt=dtupublicationquery">Tórur Biskopstø Strøm</a>
                         </div>
                     </div>
-                </footer>  
+                </footer>
             </div>
         </div>
-        <!-- Footer -->    
+        <!-- Footer -->
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <!-- Latest Chart JS library -->
         <script src="//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js"></script>
         <!-- Now Our Code -->
         <script>
-            var apiURL = window.location.protocol + "//" + window.location.hostname + ":81" //"mockup_sensor_values.json";
+            // Global Variables
+            var apiURL = window.location.protocol + "//" + window.location.hostname + ":81"
+            // var apiURL = "mockup_sensor_values.json";
             var currentTime = new Date($.now());
             var currentView = 0;
             var lastTimeLabel = "";
@@ -114,158 +124,189 @@
             var lastTempvalB = 0.0;
             var lastHumidvalA = 0.0;
             var lastHumidvalB = 0.0;
-            var rainChartA;
-            var rainChartB;
-            var tempChart;
-            var tempChartCount = 0;
-            var humChart;
-            var humChartCount = 0;
             var nodeALog = "";
             var nodeBLog = "";
+            var filterNodeKey = "";
+            var filterNodeName = "";
+            var rainChartA;
+            var rainChartB;
+            var liveChartA;
+            var liveChartCountA = 0;
+            var liveChartB;
+            var liveChartCountB = 0;
             // Update rate
             var refreshTimer = setInterval(retrieveSensorReadings, 1000);
             // Requests
             function retrieveSensorReadings() {
+                currentTime = new Date($.now());
+                var timeLabel = currentTime.toISOString();
                 $.ajax({
                     url:apiURL,
-                    dataType: "json", 
+                    dataType: "json",
                     success:function(data) {
-                        console.log("success retrieveSensorReadings, reply\n" + data);
-                        refreshSensorReading(data);
+                        refreshSensorReading(data, timeLabel);
+                    },
+                    error: function (xhr, ajaxOptions, thrownError) {
+                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + "AJAX:error-status" + xhr.status;
+                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + "AJAX:error-status" + xhr.status;
                     }
                 });
             }
             // Manage Sensors
-            function refreshSensorReading(json_obj){
-                currentTime = new Date($.now());
-                timeLabel = currentTime.getDate() + "/"
-                            + (currentTime.getMonth()+1)  + "/" 
-                            + currentTime.getFullYear() + " @ "  
-                            + currentTime.getHours() + ":"  
-                            + currentTime.getMinutes() + ":" 
-                            + currentTime.getSeconds() + "."
-                            + currentTime.getMilliseconds();
+            function refreshSensorReading(json_obj, timeLabel){
                 if (currentView == 0){
-                    // Node A
-                    try{
-                        $(".sensA_ts").html(timeLabel);
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:timestamp" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensA_temp").html(json_obj[0].tempvals[json_obj[0].tempvals.length-1].val);
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:tempvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensA_hum").html(json_obj[0].humidvals[json_obj[0].humidvals.length-1].val);
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:humidvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensA_sound").html(json_obj[0].soundvals[json_obj[0].soundvals.length-1].val);
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:soundvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensA_light").html(json_obj[0].lightvals[json_obj[0].lightvals.length-1].val);
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:lightvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        rainChartA.removeData("Rain Probability (%)");
-                        rainChartA.addData([json_obj[0].rainprob], "Rain Probability (%)");
-                        rainChartA.update();
-                    } catch(err){
-                        nodeALog += "\n" + "WARN: at time: " + timeLabel + " for obj:rainprob" + " with Error: " + err.message;
-                    }
-                    // Node B
-                    try{
-                        $(".sensB_ts").html(timeLabel);
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:timestamp" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensB_temp").html(json_obj[1].tempvals[json_obj[1].tempvals.length-1].val);
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:tempvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensB_hum").html(json_obj[1].humidvals[json_obj[1].humidvals.length-1].val);
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:humidvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensB_sound").html(json_obj[1].soundvals[json_obj[1].soundvals.length-1].val);
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:soundvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        $(".sensB_light").html(json_obj[1].lightvals[json_obj[1].lightvals.length-1].val);
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:lightvals" + " with Error: " + err.message;
-                    }
-                    try{
-                        rainChartB.removeData("Rain Probability (%)");
-                        rainChartB.addData([json_obj[1].rainprob], "Rain Probability (%)");
-                        rainChartB.update();
-                    } catch(err){
-                        nodeBLog += "\n" + "WARN: at time: " + timeLabel + " for obj:rainprob" + " with Error: " + err.message;
-                    }
+                    manageOverview(json_obj, timeLabel);
                 } else if (currentView == 1){
-                    lastTimeLabel = timeLabel
-                    try{
-                        lastTempvalA = parseFloat(json_obj[0].tempvals[json_obj[0].tempvals.length-1].val);
-                    } catch (err) {
-                        if(lastTempvalA==null || lastTempvalA == NaN){
-                            lastTempvalA = 0.0;
-                        }
-                    }
-                    try{
-                        lastTempvalB = parseFloat(json_obj[1].tempvals[json_obj[0].tempvals.length-1].val);
-                    } catch (err) {
-                        if(lastTempvalB==null || lastTempvalB == NaN){
-                            lastTempvalB = 0.0;
-                        }
-                    }
-                    if(tempChartCount >= 9){
-                        tempChart.removeData(lastTimeLabel);
-                    }
-                    tempChart.addData([lastTempvalA, lastTempvalB], timeLabel);
-                    tempChart.update();
-                    tempChartCount++;
-                    try{
-                        lastHumidvalA = parseFloat(json_obj[0].humidvals[json_obj[0].humidvals.length-1].val);
-                    } catch (err) {
-                        if(lastHumidvalA==null || lastHumidvalA == NaN){
-                            lastHumidvalA = 0.0;
-                        }
-                    }
-                    try{
-                        lastHumidvalB = parseFloat(json_obj[1].humidvals[json_obj[0].humidvals.length-1].val);
-                    } catch (err) {
-                        if(lastHumidvalB==null || lastHumidvalB == NaN){
-                            lastHumidvalB = 0.0;
-                        }
-                    }
-                    if(humChartCount >= 9){
-                        humChart.removeData(lastTimeLabel);
-                    }
-                    humChart.addData([lastHumidvalA, lastHumidvalB], timeLabel);
-                    humChart.update();
-                    humChartCount++;
+                    manageLiveGraph(json_obj, timeLabel);
                 } else if(currentView == 2){
                     $("#logNodeA").html(nodeALog);
                     $("#logNodeB").html(nodeBLog);
                 }
             }
-            // Manage view change
+            // Filters a JSON string by provided value, key
+            function filterSensorByKey(json_obj, filterKey){
+                console.log("Filtering for key:" + filterKey + "of node:" + json_obj.nodeid);
+                $.each(json_obj, function(key, value) {
+                    if (filterKey == null || key == filterKey || filterKey == ""){
+                        return value;
+                    }
+                });
+            }
+            // Manage UI
+            // Overview
+            function manageOverview(json_obj, timeLabel){
+                // Node A
+                try{
+                    $(".sensA_ts").html(timeLabel);
+                } catch(err){
+                    nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:timestamp" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensA_temp").html(json_obj[0].tempvals[json_obj[0].tempvals.length-1].val);
+                } catch(err){
+                    nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:tempvals" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensA_hum").html(json_obj[0].humidvals[json_obj[0].humidvals.length-1].val);
+                } catch(err){
+                    nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:humidvals" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensA_sound").html(json_obj[0].soundvals[json_obj[0].soundvals.length-1].val);
+                } catch(err){
+                    nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:soundvals" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensA_light").html(json_obj[0].lightvals[json_obj[0].lightvals.length-1].val);
+                } catch(err){
+                    nodeALog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:lightvals" + " with Error: " + err.message;
+                }
+                try{
+                    rainChartA.removeData("Rain Probability (%)");
+                    rainChartA.addData([Math.min(100, json_obj[0].rainprob)], "Rain Probability (%)");
+                    rainChartA.update();
+                } catch(err){
+                    nodeALog += "\n" + "WARN: at time: " + timeLabel + " for obj:rainprob" + " with Error: " + err.message;
+                }
+                // Node B
+                try{
+                    $(".sensB_ts").html(timeLabel);
+                } catch(err){
+                    nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:timestamp" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensB_temp").html(json_obj[1].tempvals[json_obj[1].tempvals.length-1].val);
+                } catch(err){
+                    nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:tempvals" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensB_hum").html(json_obj[1].humidvals[json_obj[1].humidvals.length-1].val);
+                } catch(err){
+                    nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:humidvals" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensB_sound").html(json_obj[1].soundvals[json_obj[1].soundvals.length-1].val);
+                } catch(err){
+                    nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:soundvals" + " with Error: " + err.message;
+                }
+                try{
+                    $(".sensB_light").html(json_obj[1].lightvals[json_obj[1].lightvals.length-1].val);
+                } catch(err){
+                    nodeBLog += "\n" + "WARN: at Time: " + timeLabel + " for Obj:lightvals" + " with Error: " + err.message;
+                }
+                try{
+                    rainChartB.removeData("Rain Probability (%)");
+                    rainChartB.addData([Math.min(100, json_obj[1].rainprob)], "Rain Probability (%)");
+                    rainChartB.update();
+                } catch(err){
+                    nodeBLog += "\n" + "WARN: at time: " + timeLabel + " for obj:rainprob" + " with Error: " + err.message;
+                }
+            }
+            // Data for live graph
+            function manageLiveGraph(json_obj, timeLabel){
+                lastTimeLabel = timeLabel;
+                if(json_obj.length > 0){
+                    var index;
+                    var filteredValueA = [];
+                    var filterMetricA = $('#filterSelectedMetricA').find(":selected").val();
+                    try{
+                        if(filterMetricA == "humidvals"){
+                            filteredValueA = json_obj[0].humidvals;
+                        } else if(filterMetricA == "tempvals"){
+                            filteredValueA = json_obj[0].tempvals;
+                        } else if(filterMetricA == "lightvals"){
+                            filteredValueA = json_obj[0].lightvals;
+                        } else if(filterMetricA == "soundvals"){
+                            filteredValueA = json_obj[0].soundvals;
+                        }
+                        while(liveChartCountA > 0){
+                            liveChartA.removeData();
+                            liveChartCountA--;
+                        }
+                        for (index = 0; index < filteredValueA.length; ++index) {
+                            liveChartA.addData([filteredValueA[index].val], filteredValueA[index].timestamp);
+                            liveChartCountA++;
+                        }
+                        liveChartA.update();
+                    } catch (err) {
+                        console.log("Could not update live graph " + err.message);
+                    }
+                    if(json_obj.length > 1){
+                        var filteredValueB = [];
+                        var filterMetricB = $('#filterSelectedMetricB').find(":selected").val();
+                        try{
+                            if(filterMetricB == "humidvals"){
+                                filteredValueB = json_obj[1].humidvals;
+                            } else if(filterMetricB == "tempvals"){
+                                filteredValueB = json_obj[1].tempvals;
+                            } else if(filterMetricB == "lightvals"){
+                                filteredValueB = json_obj[1].lightvals;
+                            } else if(filterMetricB == "soundvals"){
+                                filteredValueB = json_obj[1].soundvals;
+                            }
+                            while(liveChartCountB > 0){
+                                liveChartB.removeData();
+                                liveChartCountB--;
+                            }
+                            for (index = 0; index < filteredValueB.length; ++index) {
+                                liveChartB.addData([filteredValueB[index].val], filteredValueB[index].timestamp);
+                                liveChartCountB++;
+                            }
+                            liveChartB.update();
+                        } catch (err) {
+                            console.log("Could not update live graph " + err.message);
+                        }
+                    }
+                }
+            }
+            // Initialize view
             $("document").ready(function(){
                 $("#dashboard").load("overview.html");
                 $("#overviewBtn").addClass("active");
                 currentView = 0;
                 console.log("loaded overview page");
             });
+            // Manage view change
             $("#overviewBtn").click(function(){
                 $("#dashboard").load("overview.html");
                 $("#overviewLi").addClass("active");
@@ -294,6 +335,20 @@
             //$("#APIURL").keyup(function(){
             //    apiURL = $("#APIURL").val();
             //});
+            $("#checkboxRate").change(function() {
+                // this will contain a reference to the checkbox
+                if (this.checked) {
+                    var refreshRate = parseInt($("#refreshRate").val(), 10);
+                    if(refreshRate == NaN || refreshRate < 500){
+                        refreshRate == 1000;
+                    }
+                    refreshTimer = setInterval(retrieveSensorReadings, refreshRate);
+                    console.log("refresh enabled at rate " + refreshRate + " ms");
+                } else {
+                    clearInterval(refreshTimer);
+                    console.log("refresh disabled");
+                }
+            });
             $("#refreshRate").keyup(function(){
                 clearInterval(refreshTimer);
                 var refreshRate = parseInt($("#refreshRate").val(), 10);

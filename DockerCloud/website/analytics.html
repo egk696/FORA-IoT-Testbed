@@ -8,15 +8,15 @@
         <meta name="description" content="IoT-Cloud-Testbed Dashboard">
         <meta name="author" content="Eleftherios Kyriakakis">
         <link rel="icon" href="../../favicon.ico">
-    
+
         <title>Dashboard for IoT-Cloud-Testbed</title>
 
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    
+
         <!-- Custom styles for this template -->
         <link href="dashboard.css" rel="stylesheet">
-    
+
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
           <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -25,21 +25,41 @@
     </head>
 
     <body>
-        <h2 class="sub-header">Live Temperature Graph</h2>
-        <div class="chart-container">
-            <canvas id="tempChart" width="1440" height="320"></canvas>
-            <div id="tempLegend"></div>
+        <h2 class="header">Live Graph A</h2>
+        <div class="form-group">
+            <label for="filterSelectedMetricA">Select live metric for Node A:</label>
+            <select class="form-control" id="filterSelectedMetricA">
+                <option value="tempvals">Temperature (&deg;C)</option>
+                <option value="humidvals">Humidity (%)</option>
+                <option value="soundvals">Sound (Hz)</option>
+                <option value="lightvals">Light (%)</option>
+            </select>
         </div>
-        <h2 class="sub-header">Live Humidity Graph</h2>
-        <canvas id="humChart" width="1440" height="320"></canvas>
+        <div class="chart-container">
+            <canvas id="liveChartA" width="1440" height="440"></canvas>
+        </div>
+        <h2 class="header">Live Graph A</h2>
+        <div class="form-group">
+            <label for="filterSelectedMetricB">Select live metric for Node B:</label>
+            <select class="form-control" id="filterSelectedMetricB">
+                <option value="tempvals">Temperature (&deg;C)</option>
+                <option value="humidvals">Humidity (%)</option>
+                <option value="soundvals">Sound (Hz)</option>
+                <option value="lightvals">Light (%)</option>
+            </select>
+        </div>
+        <div class="chart-container">
+            <canvas id="liveChartB" width="1440" height="440"></canvas>
+        </div>
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <!-- Now Our Code -->
         <script>
+            // Global
             Chart.defaults.global.legend = {
                 enabled: true
             };
@@ -50,46 +70,58 @@
                     fontColor: "rgba(24,24,24,1)",
                     }
                 },
-                animation: true,
-                scaleOverride : true,
-                    scaleSteps : 20,
-                    scaleStepWidth : 5,
-                    scaleStartValue : 0 
+                tooltips: {
+					mode: 'index',
+					intersect: false,
+				},
+				hover: {
+					mode: 'nearest',
+					intersect: true
+				},
+                animation: false,
+				scales: {
+					xAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Timestamp'
+						}
+					}],
+					yAxes: [{
+						display: true,
+						scaleLabel: {
+							display: true,
+							labelString: 'Value'
+						}
+					}]
+				}
             };
-            var ctx = document.getElementById("tempChart").getContext("2d");
-            var data = {
-                labels: ["Temperature"],
+            // Chart A
+            var ctx = document.getElementById("liveChartA").getContext("2d");
+            var dataA = {
+                labels: ["Filtered Value"],
                 datasets: [{
                     label: "Node A",
-                    fillColor: "rgba(220,151,151,0.5)",
-                    strokeColor: "rgba(220,205,205,1)",
-                    data: [0]
-                }, {
-                    label: "Node B",
-                    fillColor: "rgba(205,187,151,0.5)",
-                    strokeColor: "rgba(205,187,151,1)",
+                    fillColor: "rgba(220,187,151,0.5)",
+                    strokeColor: "rgba(220,187,151,1)",
                     data: [0]
                 }]
             };
-            tempChart = new Chart(ctx).Line(data, options);
-            tempChartCount = 0;
-            var ctx = document.getElementById("humChart").getContext("2d");
-            var data = {
-                labels: ["Humidity"],
+            liveChartA = new Chart(ctx).Line(dataA, options);
+            liveChartCountA = 0;
+            //Chart B
+            var ctx = document.getElementById("liveChartB").getContext("2d");
+            var dataB = {
+                labels: ["Filtered Value"],
                 datasets: [{
-                    label: "Node A",
-                    fillColor: "rgba(151,151,220,0.5)",
-                    strokeColor: "rgba(151,151,220,1)",
-                    data: [0]
-                }, {
                     label: "Node B",
                     fillColor: "rgba(151,187,205,0.5)",
                     strokeColor: "rgba(151,187,205,1)",
                     data: [0]
                 }]
             };
-            humChart = new Chart(ctx).Line(data, options);
-            humChartCount = 0;
+            liveChartB = new Chart(ctx).Line(dataB, options);
+            liveChartCountB = 0;
         </script>
     </body>
 </html>

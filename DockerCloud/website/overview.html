@@ -8,17 +8,14 @@
         <meta name="description" content="IoT-Cloud-Testbed Dashboard">
         <meta name="author" content="Eleftherios Kyriakakis">
         <link rel="icon" href="../../favicon.ico">
-    
+
         <title>Dashboard for IoT-Cloud-Testbed</title>
 
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-    
+
         <!-- Custom styles for this template -->
         <link href="dashboard.css" rel="stylesheet">
-
-        <!-- Epoch Charts styles -->
-        <link rel="stylesheet" type="text/css" href="epoch-0.8.4/dist/css/epoch.min.css">
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
         <!--[if lt IE 9]>
@@ -50,7 +47,7 @@
                     <th>Temperature (&deg;C)</th>
                     <th>Humidity (%)</th>
                     <th>Sound (Hz)</th>
-                    <th>Light (Lum)</th>
+                    <th>Light (%)</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -87,11 +84,11 @@
                     </tr>
                 </tbody>
             </table>
-        </div>    
+        </div>
         <!-- Bootstrap core JavaScript
         ================================================== -->
         <!-- Placed at the end of the document so the pages load faster -->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>  
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
         <!-- Now Our Code -->
@@ -110,15 +107,15 @@
                 scaleOverride : true,
                     scaleSteps : 20,
                     scaleStepWidth : 5,
-                    scaleStartValue : 0 
+                    scaleStartValue : 0
             };
             var ctx = document.getElementById("rainChartA").getContext("2d");
             var data = {
                 labels: ["Rain Probability (%)"],
                 datasets: [{
                     label: "Node A",
-                    fillColor: "rgba(151,187,220,0.5)",
-                    strokeColor: "rgba(151,187,220,1)",
+                    fillColor: "rgba(220,187,151,0.5)",
+                    strokeColor: "rgba(220,187,151,1)",
                     data: [99.99]
                 }]
             };
@@ -129,8 +126,8 @@
                 labels: ["Rain Probability (%)"],
                 datasets: [{
                     label: "Node B",
-                    fillColor: "rgba(151,187,220,0.5)",
-                    strokeColor: "rgba(151,187,220,1)",
+                    fillColor: "rgba(151,187,205,0.5)",
+                    strokeColor: "rgba(151,187,205,1)",
                     data: [99.99]
                 }]
             };
