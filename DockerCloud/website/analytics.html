@@ -25,31 +25,35 @@
     </head>
 
     <body>
-        <h2 class="header">Live Graph A</h2>
-        <div class="form-group">
-            <label for="filterSelectedMetricA">Select live metric for Node A:</label>
-            <select class="form-control" id="filterSelectedMetricA">
-                <option value="tempvals">Temperature (&deg;C)</option>
-                <option value="humidvals">Humidity (%)</option>
-                <option value="soundvals">Sound (Hz)</option>
-                <option value="lightvals">Light (%)</option>
-            </select>
+        <div class="page-row row">
+            <h2 class="header">Live Graph A</h2>
+            <div class="form-group">
+                <label for="filterSelectedMetricA">Select live metric for Node A:</label>
+                <select class="form-control" id="filterSelectedMetricA">
+                    <option value="tempvals">Temperature (&deg;C)</option>
+                    <option value="humidvals">Humidity (%)</option>
+                    <option value="soundvals">Sound (Hz)</option>
+                    <option value="lightvals">Light (%)</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="liveChartA" width="1440" height="440"></canvas>
+            </div>
         </div>
-        <div class="chart-container">
-            <canvas id="liveChartA" width="1440" height="440"></canvas>
-        </div>
-        <h2 class="header">Live Graph A</h2>
-        <div class="form-group">
-            <label for="filterSelectedMetricB">Select live metric for Node B:</label>
-            <select class="form-control" id="filterSelectedMetricB">
-                <option value="tempvals">Temperature (&deg;C)</option>
-                <option value="humidvals">Humidity (%)</option>
-                <option value="soundvals">Sound (Hz)</option>
-                <option value="lightvals">Light (%)</option>
-            </select>
-        </div>
-        <div class="chart-container">
-            <canvas id="liveChartB" width="1440" height="440"></canvas>
+        <div class="page-row row">
+            <h2 class="header">Live Graph A</h2>
+            <div class="form-group">
+                <label for="filterSelectedMetricB">Select live metric for Node B:</label>
+                <select class="form-control" id="filterSelectedMetricB">
+                    <option value="tempvals">Temperature (&deg;C)</option>
+                    <option value="humidvals">Humidity (%)</option>
+                    <option value="soundvals">Sound (Hz)</option>
+                    <option value="lightvals">Light (%)</option>
+                </select>
+            </div>
+            <div class="chart-container">
+                <canvas id="liveChartB" width="1440" height="440"></canvas>
+            </div>
         </div>
         <!-- Bootstrap core JavaScript
         ================================================== -->
@@ -99,7 +103,7 @@
             // Chart A
             var ctx = document.getElementById("liveChartA").getContext("2d");
             var dataA = {
-                labels: ["Filtered Value"],
+                labels: ["No Value"],
                 datasets: [{
                     label: "Node A",
                     fillColor: "rgba(220,187,151,0.5)",
@@ -112,7 +116,7 @@
             //Chart B
             var ctx = document.getElementById("liveChartB").getContext("2d");
             var dataB = {
-                labels: ["Filtered Value"],
+                labels: ["No Value"],
                 datasets: [{
                     label: "Node B",
                     fillColor: "rgba(151,187,205,0.5)",
