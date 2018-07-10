@@ -6,3 +6,5 @@ The sensor nodes measure values using connected sensors and transmit these value
 The two sensor node types behave similarly and merely showcase how the solution can work with both a Raspbian/python platform and a Windows IoT/.NET platform. Any combination of the two can be used in the setup.
 
 Descriptions on how to setup the cloud and sensor nodes are located in the respective folders.
+
+![Overall Architecture Illustration](SC3_Arch_Overview.png?raw=true "Overall Architecture Illustration")
