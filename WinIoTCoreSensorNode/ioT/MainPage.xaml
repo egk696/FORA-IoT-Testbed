@@ -96,7 +96,7 @@
             </Button>
             <TextBlock HorizontalAlignment="Left" Margin="760,130,0,0" Text="@gmail.com" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30"/>
             <TextBlock x:Name="calmes" HorizontalAlignment="Stretch" Margin="0,825,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30" Width="790" Height="45"/>
-            <TextBox x:Name="uri_box" HorizontalAlignment="Left" Margin="703,300,0,0" Text="http://192.168.234.47:82/" VerticalAlignment="Top" Width="400" Height="52" FontSize="25"/>
+            <TextBox x:Name="uri_box" HorizontalAlignment="Left" Margin="703,300,0,0" Text="http://192.168.0.100:82/" VerticalAlignment="Top" Width="400" Height="52" FontSize="25"/>
             <TextBlock x:Name="passwordlabel_Copy" HorizontalAlignment="Left" Margin="626,308,0,0" Text="URI" TextWrapping="Wrap" VerticalAlignment="Top" FontFamily="Segoe UI" FontSize="30"/>
 
         </Grid>
