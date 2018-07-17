@@ -14,11 +14,11 @@ import dateutil.parser
 
 HOSTNAME='0.0.0.0'
 PORT_NUMBER = 80
-SOUND_THRESHOLD = 500
-COEFF_SOUND = 2
-COEFF_HUMID = 1.7
-COEFF_TEMP = 1
-MAX_SOUNDF = 100
+SOUND_THRESHOLD = 350
+COEFF_SOUND = 4
+COEFF_HUMID = 2
+COEFF_TEMP = 0.5
+MAX_SOUNDF = 10
 MIN_SOUNDF = 0
 MAX_HUMID = 100
 MIN_HUMID = 0
@@ -40,7 +40,7 @@ def getBuffer():
 def datetimeToSeconds(timestamp_string):
 #    datetime_val = datetime.datetime.strptime(timestamp_string, "%Y-%m-%dT%H:%M:%S.%fZ")
     datetime_val = dateutil.parser.parse(timestamp_string)
-    return datetime_val.timestamp()/1000
+    return datetime_val.timestamp()
 
 def newData():
     return_string = ''
@@ -137,6 +137,12 @@ def newData():
             time_interval = max(soundtimes) - min(soundtimes)
             # Compute frequency of sound values above threshold
             sound_freq = number_up_val/time_interval
+            if sound_freq > MAX_SOUNDF:
+                sound_freq = MAX_SOUNDF
+            # file = open("sound_freq.txt",'a')
+            # file.write(str(sound_freq)+"="+str(number_up_val)+"/"+str(time_interval)+"\n")
+            # file.close()
+            # print(sound_freq+"="+number_up_val+"/"+time_interval)
             # print(str(number_up_val)+'/'+str(time_interval)+'='+str(frequency))
 
         # Compute probabilities of rain
@@ -157,7 +163,7 @@ class myRequestHandler(BaseHTTPRequestHandler):
     # process GET request
     def do_GET(self):
         try:
-	    
+
             try:
                 data = newData()
                 if data != '':
@@ -166,7 +172,7 @@ class myRequestHandler(BaseHTTPRequestHandler):
                 print(str(e))
 
             data = getBuffer()
-           
+
             if data == '':
                 raise ValueError('No data available')
 
@@ -192,8 +198,8 @@ class myRequestHandler(BaseHTTPRequestHandler):
         self.send_response(200)
         self.send_header("Content-type", "text/html")
         self._end_headers()
-    
-    # with access-control-allow-origin (see https://stackoverflow.com/questions/21956683/enable-access-control-on-simple-http-server)    
+
+    # with access-control-allow-origin (see https://stackoverflow.com/questions/21956683/enable-access-control-on-simple-http-server)
     def _end_headers (self):
         self.send_header('Access-Control-Allow-Origin', '*')
         self.end_headers()

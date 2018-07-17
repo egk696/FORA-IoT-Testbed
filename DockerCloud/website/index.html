@@ -144,6 +144,7 @@
                     url:apiURL,
                     dataType: "json",
                     success:function(data) {
+                        data.sort(function(a, b){return a["nodeid"] < b["nodeid"]})
                         refreshSensorReading(data, timeLabel);
                     },
                     error: function (xhr, ajaxOptions, thrownError) {
